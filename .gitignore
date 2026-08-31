@@ -1,0 +1,5 @@
+data/processed
+data/raw
+project.md
+__pycache__/
+*.pyc
