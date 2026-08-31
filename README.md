@@ -67,8 +67,12 @@ the math is defined once and reused rather than copy-pasted per notebook.
   almost entirely a leverage-cycling problem, not a signal-timing problem.
 - **Parameter sweep**: the current regime multipliers sit at the 75th–99th percentile of a
   132-point grid across four different sub-periods — never the single best choice in any one
-  window, but consistently good across all of them, which is a reasonable signature of a
-  robust choice rather than one fit to a single historical path.
+  window, but consistently good across all of them, a reasonable signature of a robust choice
+  rather than one fit to a single historical path. A walk-forward version (select multipliers
+  using only past sub-periods, evaluate on the next one blind) actually underperformed just
+  keeping the current fixed value — with only ~2.5 years of training data per step, the
+  "best" combo on that window was itself a noisy estimate. Removing look-ahead bias doesn't
+  remove estimation noise, and with short training windows the noise can dominate.
 
 ## Known limitations
 
