@@ -65,7 +65,8 @@ variant are -69% to -93%: none of the blends protects against the tail.
 
 ## 5. Caveats
 - 12 variants is a small family but the family is not independent (all share the same inputs).
-  Counting against the project-wide ~500 trials, nothing here would survive deflation anyway.
+  Counted against the several hundred trials logged across the project, nothing here would survive
+  deflation anyway.
 - One regime source's tail behaviour (Feb 2018) drives most of the sign differences.
 - SVXY is a -1x then -0.5x VIX-futures ETF; a variance swap has different P&L (report 01).
 
