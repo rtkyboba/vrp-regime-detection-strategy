@@ -1,0 +1,309 @@
+﻿Sample: OOS = 2016-01-01 .. 2026-05-22; positions: 4 variants; mean soft position OOS = 0.372
+
+[1] Held-to-maturity 1-month short variance swap (payoff in vol points per unit vega; capital = 48 vol pts)
+sample                      all entries 2006-2026  entries >= 2016  entries 2006-2015
+n_entries                                9143.000         2591.000           6552.000
+avg_strike_vol                             19.464           18.556             19.824
+avg_realised_vol                           15.368           14.901             15.553
+mean_payoff_volpts                          2.683            1.669              3.083
+median_payoff                               3.967            3.906              3.998
+std_payoff                                 10.350           15.945              6.958
+win_rate                                    0.858            0.838              0.866
+worst_payoff_volpts                      -252.198         -252.198            -97.661
+skew                                      -12.505          -10.644             -6.088
+ex_kurt                                   237.492          139.743             57.967
+ruin_free_leverage                          0.190            0.190              0.491
+pct_months_loss_gt_capital                  0.006            0.011              0.004
+
+[1b] HTM Sharpe, entries >= 2016 (monthly = non-overlapping, averaged over the 21 phase offsets; ladder = overlapping daily entries booked at maturity)
+                                     monthly_sharpe_mean  monthly_sharpe_min  monthly_sharpe_max  ladder_sharpe_NW  ladder_sharpe_naive  approx_se_iid  n_cohorts
+position                   cost_bps                                                                                                                              
+soft (original, causal)    0                       0.514              -0.096               1.214             0.374                1.212          0.313      124.0
+                           1                       0.513              -0.096               1.211             0.373                1.208          0.313      124.0
+                           2                       0.511              -0.097               1.209             0.371                1.204          0.313      124.0
+                           5                       0.507              -0.098               1.203             0.368                1.192          0.313      124.0
+hard argmax (causal)       0                       0.507              -0.099               1.219             0.346                1.103          0.313      124.0
+rank only (no regime gate) 0                       0.317               0.006               0.943             0.306                1.149          0.312      124.0
+constant short             0                       0.463               0.114               0.821             0.443                1.662          0.312      124.0
+                           1                       0.462               0.113               0.820             0.442                1.657          0.312      124.0
+                           2                       0.461               0.113               0.818             0.441                1.653          0.312      124.0
+                           5                       0.457               0.111               0.813             0.437                1.638          0.312      124.0
+
+[2] Daily validation vs real SVXY (-1x-equivalent: post-2018-02-27 returns doubled)
+                                                                       corr  beta (SVXY on model)     R2  TE_ann_with_pre2016_beta     n
+model                                    period                                                                                         
+MTM swap (carry+realised+MTM)            2011-11..2015 (calibration)  0.809                 0.991  0.654                     0.372  1048
+                                         2016..2026 (OOS)             0.769                 0.710  0.591                     0.545  2612
+MTM swap, single VIX node (no term str.) 2011-11..2015 (calibration)  0.810                 1.003  0.656                     0.371  1048
+                                         2016..2026 (OOS)             0.770                 0.721  0.593                     0.543  2612
+legacy proxy (carry - realised)          2011-11..2015 (calibration)  0.212                 1.033  0.045                     0.618  1048
+                                         2016..2026 (OOS)             0.374                 1.209  0.140                     0.715  2612
+  calibration: pre-2016 beta of SVXY on MTM swap at capital 48.0 = 0.991
+  SVXY raw (as traded)     vs MTM swap (carry+realised+MTM)    corr=0.654 beta=0.403 n=2612
+  SVXY raw (as traded)     vs legacy proxy (carry - realised)  corr=0.321 beta=0.692 n=2612
+  -VXX (2018-01..)         vs MTM swap (carry+realised+MTM)    corr=0.820 beta=0.670 n=2092
+  -VXX (2018-01..)         vs legacy proxy (carry - realised)  corr=0.391 beta=1.110 n=2092
+
+  correlation with SVXY by year
+date         2011  2012  2013  2014  2015  2016  2017  2018  2019  2020  2021  2022  2023  2024  2025  2026
+corr_mtm     0.89  0.81  0.86  0.85  0.79  0.89  0.87  0.47  0.90  0.85  0.90  0.88  0.90  0.88  0.85  0.90
+corr_legacy  0.15  0.03  0.20  0.24  0.32  0.41  0.36  0.36  0.42  0.57  0.43  0.38  0.23  0.47  0.20  0.09
+
+  worst 20 SVXY days: mean daily return captured by each model (beta-scaled)
+SVXY -1x worst-20-day mean   -0.279
+MTM swap x pre2016 beta      -0.360
+legacy x pre2016 beta        -0.091
+dtype: float64
+
+[2b] Unlevered return/drawdown comparison (non-excess, 1x)
+                                                            ann_return  ann_vol  sharpe  max_dd  worst_day  ruined
+window                series                                                                                      
+2011-11 .. 2018-02-02 SVXY (as traded)                           0.640    0.616   1.040  -0.679     -0.264   False
+                      SVXY (-1x equivalent)                      0.640    0.616   1.040  -0.679     -0.264   False
+                      MTM swap 1x                                0.645    0.494   1.304  -0.626     -0.378   False
+                      MTM swap x pre2016 beta (SVXY-sized)       0.639    0.490   1.304  -0.622     -0.374   False
+                      legacy x pre2016 beta (SVXY-sized)         0.812    0.129   6.305  -0.172     -0.091   False
+2011-11 .. end        SVXY (as traded)                           0.293    0.550   0.532  -0.952     -0.830   False
+                      SVXY (-1x equivalent)                      0.385    0.733   0.526  -0.982     -0.830   False
+                      MTM swap 1x                                0.463    0.756   0.612  -0.999     -0.939   False
+                      MTM swap x pre2016 beta (SVXY-sized)       0.459    0.749   0.612  -0.999     -0.931   False
+                      legacy x pre2016 beta (SVXY-sized)         0.757    0.220   3.444  -0.772     -0.334   False
+2018-03 .. end        SVXY (as traded)                           0.165    0.372   0.444  -0.622     -0.214   False
+                      SVXY (-1x equivalent)                      0.330    0.743   0.444  -0.879     -0.429   False
+                      MTM swap 1x                                0.386    0.861   0.448  -0.997     -0.939   False
+                      MTM swap x pre2016 beta (SVXY-sized)       0.383    0.854   0.448  -0.997     -0.931   False
+                      legacy x pre2016 beta (SVXY-sized)         0.733    0.265   2.762  -0.772     -0.334   False
+
+[2c] Event 2018-02: daily returns (mtm_swap_1x in capital units; *_x_beta = pre-2016-beta-scaled, i.e. SVXY(-1x)-sized)
+            svxy_as_traded  svxy_minus1x_equiv  mtm_swap_1x  mtm_x_beta  legacy_x_beta  mtm_term_only_1x    vix  vix_chg
+date                                                                                                                    
+2018-02-01           0.030               0.030        0.008       0.008          0.007             0.001  13.47    -0.07
+2018-02-02          -0.132              -0.132       -0.124      -0.123         -0.037            -0.088  17.31     3.84
+2018-02-05          -0.320              -0.320       -0.770      -0.764         -0.122            -0.653  37.32    20.01
+2018-02-06          -0.830              -0.830        0.136       0.135          0.009             0.128  29.98    -7.34
+2018-02-07           0.007               0.007        0.055       0.054          0.014             0.041  27.73    -2.25
+2018-02-08          -0.223              -0.223       -0.182      -0.181         -0.054            -0.130  33.46     5.73
+2018-02-09           0.134               0.134        0.089       0.088          0.009             0.081  29.06    -4.40
+  compounded over window: {'svxy_as_traded': -0.908, 'svxy_minus1x_equiv': -0.908, 'mtm_swap_1x': -0.784, 'mtm_x_beta': -0.777, 'legacy_x_beta': -0.169}
+
+[2c] Event 2020-02/03: daily returns (mtm_swap_1x in capital units; *_x_beta = pre-2016-beta-scaled, i.e. SVXY(-1x)-sized)
+            svxy_as_traded  svxy_minus1x_equiv  mtm_swap_1x  mtm_x_beta  legacy_x_beta  mtm_term_only_1x    vix  vix_chg
+date                                                                                                                    
+2020-02-20          -0.018              -0.036       -0.018      -0.018          0.006            -0.024  15.56     1.18
+2020-02-21          -0.031              -0.062       -0.032      -0.032         -0.001            -0.031  17.08     1.52
+2020-02-24          -0.095              -0.190       -0.276      -0.273         -0.079            -0.199  25.03     7.95
+2020-02-25          -0.045              -0.091       -0.099      -0.098         -0.036            -0.064  27.85     2.82
+2020-02-26           0.014               0.027        0.015       0.015          0.014             0.002  27.56    -0.29
+2020-02-27          -0.079              -0.158       -0.369      -0.365         -0.081            -0.290  39.16    11.60
+2020-02-28          -0.023              -0.046       -0.008      -0.008          0.018            -0.026  40.11     0.95
+2020-03-02           0.020               0.041        0.075       0.074         -0.045             0.118  33.42    -6.69
+2020-03-03          -0.056              -0.112       -0.090      -0.090         -0.014            -0.077  36.82     3.40
+2020-03-04           0.028               0.055        0.048       0.047         -0.041             0.088  31.99    -4.83
+2020-03-05          -0.078              -0.155       -0.205      -0.204         -0.032            -0.175  39.62     7.63
+2020-03-06          -0.053              -0.105       -0.040      -0.040          0.011            -0.051  41.94     2.32
+2020-03-09          -0.124              -0.248       -0.461      -0.457         -0.171            -0.296  54.46    12.52
+2020-03-10           0.049               0.098        0.102       0.101         -0.027             0.129  47.30    -7.16
+2020-03-11          -0.063              -0.126       -0.191      -0.189         -0.044            -0.148  53.90     6.60
+2020-03-12          -0.119              -0.237       -0.738      -0.732         -0.212            -0.533  75.47    21.57
+2020-03-13           0.053               0.107        0.212       0.210         -0.096             0.305  57.83   -17.64
+2020-03-16          -0.195              -0.391       -0.939      -0.931         -0.334            -0.616  82.69    24.86
+2020-03-17           0.023               0.047        0.111       0.110         -0.011             0.122  75.91    -6.78
+2020-03-18          -0.091              -0.181       -0.030      -0.030         -0.009            -0.021  76.45     0.54
+  compounded over window: {'svxy_as_traded': -0.612, 'svxy_minus1x_equiv': -0.871, 'mtm_swap_1x': -0.997, 'mtm_x_beta': -0.996, 'legacy_x_beta': -0.732}
+
+[2d] Annual P&L decomposition of the constant-maturity short swap (vol points per unit vega)
+      carry  realised   mtm  total  legacy
+date                                      
+1990  137.9     -62.7 -23.2   52.1    75.2
+1991  110.9     -66.4  -2.6   41.9    44.5
+1992   93.6     -36.2   2.7   60.0    57.4
+1993   76.4     -34.7  -3.8   37.9    41.7
+1994   83.5     -40.7  -8.6   34.2    42.8
+1995   74.3     -31.4  -2.8   40.2    43.0
+1996   99.2     -51.4 -14.9   32.9    47.8
+1997  134.7     -87.4 -10.7   36.6    47.3
+1998  153.6     -83.7 -14.2   55.8    69.9
+1999  146.2     -78.6  -9.5   58.1    67.6
+2000  139.8    -119.7 -11.1    9.0    20.2
+2001  152.1    -100.5  -7.1   44.6    51.6
+2002  163.6    -134.9 -16.1   12.6    28.7
+2003  132.1     -73.9   5.7   64.0    58.2
+2004   93.0     -46.7   0.1   46.4    46.3
+2005   76.9     -47.9  -3.3   25.6    29.0
+2006   76.5     -44.5  -5.8   26.3    32.1
+2007  104.5     -80.3 -26.7   -2.5    24.2
+2008  196.5    -234.1 -48.0  -85.5   -37.6
+2009  189.3    -122.3   4.2   71.2    67.0
+2010  135.4     -77.9 -13.7   43.9    57.5
+2011  145.1    -114.2 -33.1   -2.2    30.9
+2012  106.1     -52.8  -0.3   52.9    53.2
+2013   85.5     -50.1  -3.1   32.2    35.4
+2014   84.9     -50.6 -13.8   20.6    34.4
+2015  100.1     -75.2 -16.5    8.4    24.9
+2016   95.1     -56.9  -6.3   31.9    38.1
+2017   66.3     -23.9   1.0   43.5    42.4
+2018   99.1     -88.8 -45.1  -34.8    10.3
+2019   92.6     -55.3   3.0   40.3    37.3
+2020  176.0    -170.5 -47.7  -42.2     5.4
+2021  118.1     -48.6  -8.3   61.1    69.4
+2022  153.0    -134.4 -17.9    0.6    18.6
+2023  100.6     -58.3   5.3   47.6    42.3
+2024   93.5     -59.1 -20.8   13.7    34.5
+2025  112.9     -81.3 -15.6   16.0    31.6
+2026   46.3     -20.7  -5.4   20.2    25.6
+  OOS mean annual vol-pts: {'carry': 111.3, 'realised': -76.99, 'mtm': -15.23, 'total': 19.08, 'legacy': 34.31}
+
+[3] Vol-target turnover, OOS (x per year). scalar_turnover = sum|d leverage| (notebook-08 definition)
+                instrument                 position                                                            config  scalar_turnover_x_yr  mean_scalar  scalar_turnover_per_unit_lev  total_exposure_turnover_x_yr  sharpe_gross
+0   legacy proxy (cap 100)  soft (original, causal)  V0 original: strategy-vol, 126d rolling, daily re-lever, cap 100                 78.58        83.27                          0.94                       1291.06          2.72
+1   legacy proxy (cap 100)  soft (original, causal)                                  V1 unit-vol, 126d rolling, daily                120.27        49.42                          2.43                        915.83          1.98
+2   legacy proxy (cap 100)  soft (original, causal)                                    V2 unit-vol, EWMA hl=63, daily                 70.17        36.75                          1.91                        682.77          1.48
+3   legacy proxy (cap 100)  soft (original, causal)                                 V3 unit-vol, EWMA hl=63, band 25%                 40.47        34.26                          1.18                        629.72          1.50
+4   legacy proxy (cap 100)  soft (original, causal)                                V4 unit-vol, EWMA hl=126, band 25%                 21.95        27.92                          0.79                        511.38          1.27
+5   legacy proxy (cap 100)           constant short  V0 original: strategy-vol, 126d rolling, daily re-lever, cap 100                120.27        49.42                          2.43                        123.02          2.89
+6   legacy proxy (cap 100)           constant short                                  V1 unit-vol, 126d rolling, daily                120.27        49.42                          2.43                        123.02          2.89
+7   legacy proxy (cap 100)           constant short                                    V2 unit-vol, EWMA hl=63, daily                 70.17        36.75                          1.91                         73.70          2.02
+8   legacy proxy (cap 100)           constant short                                 V3 unit-vol, EWMA hl=63, band 25%                 40.47        34.26                          1.18                         43.70          1.73
+9   legacy proxy (cap 100)           constant short                                V4 unit-vol, EWMA hl=126, band 25%                 21.95        27.92                          0.79                         25.98          1.10
+10      real SVXY (cap 3x)  soft (original, causal)  V0 original: strategy-vol, 126d rolling, daily re-lever, cap 100                  1.64         0.72                          2.27                          8.28         -0.14
+11      real SVXY (cap 3x)  soft (original, causal)                                  V1 unit-vol, 126d rolling, daily                  0.49         0.26                          1.89                          4.01         -0.14
+12      real SVXY (cap 3x)  soft (original, causal)                                    V2 unit-vol, EWMA hl=63, daily                  0.39         0.24                          1.64                          3.68         -0.09
+13      real SVXY (cap 3x)  soft (original, causal)                                 V3 unit-vol, EWMA hl=63, band 25%                  0.11         0.23                          0.49                          3.51         -0.08
+14      real SVXY (cap 3x)  soft (original, causal)                                V4 unit-vol, EWMA hl=126, band 25%                  0.04         0.21                          0.21                          3.11         -0.05
+15      real SVXY (cap 3x)           constant short  V0 original: strategy-vol, 126d rolling, daily re-lever, cap 100                  0.49         0.26                          1.89                          0.51          0.25
+16      real SVXY (cap 3x)           constant short                                  V1 unit-vol, 126d rolling, daily                  0.49         0.26                          1.89                          0.51          0.25
+17      real SVXY (cap 3x)           constant short                                    V2 unit-vol, EWMA hl=63, daily                  0.39         0.24                          1.64                          0.40          0.29
+18      real SVXY (cap 3x)           constant short                                 V3 unit-vol, EWMA hl=63, band 25%                  0.11         0.23                          0.49                          0.12          0.30
+19      real SVXY (cap 3x)           constant short                                V4 unit-vol, EWMA hl=126, band 25%                  0.04         0.21                          0.21                          0.06          0.32
+  signal-only turnover (no vol target, soft position): 15.11 x/yr
+
+  original tooling, causal soft positions (legacy proxy, 10% target, cap 100): Sharpe=2.809, mean scalar=83.1, max=100.0
+
+[4] Original strategy (causal) through each P&L model, OOS 2016+, excess of rf where funded
+
+  -- position: soft (original, causal)
+                                                                              sharpe  gross_sharpe  sortino  ann_return  ann_vol  max_drawdown  worst_day    skew  excess_kurtosis  turnover_per_yr  pct_invested
+model                                                               cost_bps                                                                                                                                     
+A legacy proxy, as published (vol-tgt 10%, cap 100)                 0          2.720         2.720    3.054       0.295    0.109        -0.196     -0.161 -10.561          183.543         1291.061         0.979
+B real SVXY, unlevered                                              0          0.018         0.018    0.022       0.005    0.267        -0.698     -0.315  -5.573           86.054           15.114         0.971
+                                                                    1          0.013         0.018    0.015       0.003    0.267        -0.701     -0.315  -5.574           86.063           15.114         0.971
+                                                                    2          0.007         0.018    0.008       0.002    0.267        -0.704     -0.315  -5.575           86.072           15.114         0.971
+                                                                    5         -0.010         0.018   -0.012      -0.003    0.267        -0.713     -0.315  -5.577           86.099           15.114         0.971
+C real SVXY, vol-tgt 10% dampened, cap 3x                           0         -0.078        -0.078   -0.091      -0.005    0.059        -0.214     -0.083  -7.521          137.156            3.513         0.971
+                                                                    1         -0.084        -0.078   -0.097      -0.005    0.059        -0.216     -0.083  -7.522          137.162            3.513         0.971
+                                                                    2         -0.090        -0.078   -0.104      -0.005    0.059        -0.218     -0.083  -7.523          137.168            3.513         0.971
+                                                                    5         -0.108        -0.078   -0.125      -0.006    0.059        -0.224     -0.083  -7.525          137.186            3.513         0.971
+D real SVXY, vol-tgt 10% daily re-lever, cap 3x                     0         -0.143        -0.143   -0.168      -0.009    0.065        -0.251     -0.071  -5.037           66.763            4.005         0.971
+                                                                    1         -0.149        -0.143   -0.175      -0.010    0.065        -0.253     -0.071  -5.037           66.767            4.005         0.971
+                                                                    2         -0.155        -0.143   -0.182      -0.010    0.065        -0.256     -0.071  -5.038           66.772            4.005         0.971
+                                                                    5         -0.174        -0.143   -0.204      -0.011    0.065        -0.262     -0.071  -5.041           66.785            4.005         0.971
+E MTM swap (cm 1m), unlevered 1x                                    0          0.032         0.032    0.034       0.013    0.414        -0.899     -0.758 -13.553          318.737           15.114         0.971
+                                                                    1          0.028         0.032    0.030       0.012    0.414        -0.900     -0.758 -13.553          318.748           15.114         0.971
+                                                                    2          0.024         0.032    0.026       0.010    0.414        -0.901     -0.758 -13.554          318.759           15.114         0.971
+                                                                    5          0.013         0.032    0.014       0.006    0.414        -0.904     -0.758 -13.555          318.792           15.114         0.971
+F MTM swap, vol-tgt 10% dampened, cap 3x                            0         -0.185        -0.185   -0.191      -0.020    0.106        -0.387     -0.258 -26.416          936.120            2.677         0.970
+                                                                    1         -0.187        -0.185   -0.193      -0.020    0.106        -0.388     -0.258 -26.416          936.126            2.677         0.970
+                                                                    2         -0.190        -0.185   -0.196      -0.020    0.106        -0.389     -0.258 -26.416          936.132            2.677         0.970
+                                                                    5         -0.197        -0.185   -0.204      -0.021    0.106        -0.392     -0.258 -26.417          936.149            2.677         0.970
+G legacy carry-realised on swap scale, unlevered 1x                 0          3.264         3.264    3.711       0.278    0.085        -0.154     -0.116  -9.325          143.775           15.114         0.971
+                                                                    1          3.246         3.264    3.690       0.277    0.085        -0.154     -0.116  -9.328          143.826           15.114         0.971
+                                                                    2          3.229         3.264    3.669       0.275    0.085        -0.154     -0.116  -9.331          143.876           15.114         0.971
+                                                                    5          3.177         3.264    3.606       0.271    0.085        -0.155     -0.116  -9.339          144.018           15.114         0.971
+H legacy carry-realised on swap scale, vol-tgt 10% dampened, cap 3x 0          2.180         2.180    2.357       0.157    0.072        -0.190     -0.150 -17.773          502.910           10.390         0.971
+                                                                    1          2.165         2.180    2.341       0.156    0.072        -0.190     -0.150 -17.777          503.065           10.390         0.971
+                                                                    2          2.151         2.180    2.325       0.155    0.072        -0.190     -0.150 -17.781          503.216           10.390         0.971
+                                                                    5          2.108         2.180    2.277       0.152    0.072        -0.191     -0.150 -17.794          503.639           10.390         0.971
+
+  -- position: hard argmax (causal)
+                                                                              sharpe  gross_sharpe  sortino  ann_return  ann_vol  max_drawdown  worst_day    skew  excess_kurtosis  turnover_per_yr  pct_invested
+model                                                               cost_bps                                                                                                                                     
+A legacy proxy, as published (vol-tgt 10%, cap 100)                 0          2.657         2.657    2.982       0.291    0.109        -0.196     -0.161 -10.444          179.368         1322.116          0.91
+B real SVXY, unlevered                                              0          0.017         0.017    0.020       0.005    0.269        -0.700     -0.315  -5.555           84.966           15.568          0.91
+C real SVXY, vol-tgt 10% dampened, cap 3x                           0         -0.085        -0.085   -0.098      -0.005    0.060        -0.217     -0.087  -7.841          147.502            3.633          0.91
+D real SVXY, vol-tgt 10% daily re-lever, cap 3x                     0         -0.140        -0.140   -0.165      -0.009    0.066        -0.250     -0.075  -5.152           70.527            4.115          0.91
+E MTM swap (cm 1m), unlevered 1x                                    0          0.019         0.019    0.021       0.008    0.420        -0.904     -0.758 -13.280          307.145           15.568          0.91
+F MTM swap, vol-tgt 10% dampened, cap 3x                            0         -0.193        -0.193   -0.199      -0.021    0.107        -0.392     -0.258 -26.052          908.208            2.740          0.91
+G legacy carry-realised on swap scale, unlevered 1x                 0          3.208         3.208    3.645       0.276    0.086        -0.154     -0.116  -9.192          139.624           15.568          0.91
+H legacy carry-realised on swap scale, vol-tgt 10% dampened, cap 3x 0          2.152         2.152    2.327       0.156    0.072        -0.190     -0.150 -17.571          493.557           10.613          0.91
+
+  -- position: rank only (no regime gate)
+                                                                              sharpe  gross_sharpe  sortino  ann_return  ann_vol  max_drawdown  worst_day    skew  excess_kurtosis  turnover_per_yr  pct_invested
+model                                                               cost_bps                                                                                                                                     
+A legacy proxy, as published (vol-tgt 10%, cap 100)                 0          1.744         1.744    1.940       0.256    0.147        -0.469     -0.161  -8.518          109.594         1299.851           1.0
+B real SVXY, unlevered                                              0          0.059         0.059    0.066       0.025    0.420        -0.946     -0.830 -13.433          385.943           20.243           1.0
+C real SVXY, vol-tgt 10% dampened, cap 3x                           0          0.018         0.018    0.020       0.001    0.082        -0.310     -0.113  -7.597          136.470            4.650           1.0
+D real SVXY, vol-tgt 10% daily re-lever, cap 3x                     0         -0.009        -0.009   -0.010      -0.001    0.087        -0.330     -0.117  -6.092          100.826            5.175           1.0
+E MTM swap (cm 1m), unlevered 1x                                    0          0.285         0.285    0.317       0.182    0.638        -0.985     -0.758  -8.424          125.091           20.243           1.0
+F MTM swap, vol-tgt 10% dampened, cap 3x                            0         -0.044        -0.044   -0.046      -0.005    0.118        -0.425     -0.258 -20.226          619.750            3.228           1.0
+G legacy carry-realised on swap scale, unlevered 1x                 0          1.947         1.947    2.112       0.322    0.166        -0.598     -0.202 -10.141          147.597           20.243           1.0
+H legacy carry-realised on swap scale, vol-tgt 10% dampened, cap 3x 0          1.939         1.939    2.118       0.175    0.090        -0.278     -0.150 -11.365          224.750           12.691           1.0
+
+  -- position: constant short
+                                                                              sharpe  gross_sharpe  sortino  ann_return  ann_vol  max_drawdown  worst_day    skew  excess_kurtosis  turnover_per_yr  pct_invested
+model                                                               cost_bps                                                                                                                                     
+A legacy proxy, as published (vol-tgt 10%, cap 100)                 0          2.895         2.895    3.265       0.435    0.150        -0.497     -0.163  -7.339           84.626          123.017           1.0
+B real SVXY, unlevered                                              0          0.344         0.344    0.403       0.177    0.514        -0.954     -0.830  -7.902          174.626            0.096           1.0
+                                                                    1          0.344         0.344    0.403       0.177    0.514        -0.954     -0.830  -7.902          174.626            0.096           1.0
+                                                                    2          0.344         0.344    0.403       0.177    0.514        -0.954     -0.830  -7.902          174.626            0.096           1.0
+                                                                    5          0.344         0.344    0.403       0.177    0.514        -0.954     -0.830  -7.902          174.626            0.096           1.0
+C real SVXY, vol-tgt 10% dampened, cap 3x                           0          0.295         0.295    0.351       0.030    0.103        -0.332     -0.113  -4.498           56.758            0.125           1.0
+                                                                    1          0.295         0.295    0.351       0.030    0.103        -0.332     -0.113  -4.499           56.766            0.125           1.0
+                                                                    2          0.295         0.295    0.350       0.030    0.103        -0.332     -0.113  -4.499           56.774            0.125           1.0
+                                                                    5          0.295         0.295    0.350       0.030    0.103        -0.332     -0.113  -4.500           56.798            0.125           1.0
+D real SVXY, vol-tgt 10% daily re-lever, cap 3x                     0          0.254         0.254    0.305       0.029    0.112        -0.352     -0.117  -3.672           40.304            0.505           1.0
+                                                                    1          0.254         0.254    0.304       0.028    0.112        -0.352     -0.117  -3.672           40.310            0.505           1.0
+                                                                    2          0.253         0.254    0.303       0.028    0.112        -0.352     -0.117  -3.672           40.315            0.505           1.0
+                                                                    5          0.252         0.254    0.302       0.028    0.112        -0.353     -0.117  -3.673           40.330            0.505           1.0
+E MTM swap (cm 1m), unlevered 1x                                    0          0.477         0.477    0.533       0.398    0.833        -0.999     -0.939  -6.895           88.552            0.096           1.0
+                                                                    1          0.477         0.477    0.533       0.398    0.833        -0.999     -0.939  -6.895           88.552            0.096           1.0
+                                                                    2          0.477         0.477    0.533       0.398    0.833        -0.999     -0.939  -6.895           88.552            0.096           1.0
+                                                                    5          0.477         0.477    0.533       0.398    0.833        -0.999     -0.939  -6.895           88.552            0.096           1.0
+F MTM swap, vol-tgt 10% dampened, cap 3x                            0          0.203         0.203    0.217       0.027    0.134        -0.445     -0.262 -14.860          392.287            0.148           1.0
+                                                                    1          0.203         0.203    0.217       0.027    0.134        -0.445     -0.262 -14.860          392.294            0.148           1.0
+                                                                    2          0.203         0.203    0.217       0.027    0.134        -0.445     -0.262 -14.861          392.302            0.148           1.0
+                                                                    5          0.202         0.203    0.216       0.027    0.134        -0.445     -0.262 -14.861          392.323            0.148           1.0
+G legacy carry-realised on swap scale, unlevered 1x                 0          3.002         3.002    3.296       0.715    0.238        -0.760     -0.324  -9.114          132.980            0.096           1.0
+                                                                    1          3.002         3.002    3.296       0.715    0.238        -0.760     -0.324  -9.114          132.980            0.096           1.0
+                                                                    2          3.002         3.002    3.296       0.715    0.238        -0.760     -0.324  -9.114          132.980            0.096           1.0
+                                                                    5          3.002         3.002    3.296       0.715    0.238        -0.760     -0.324  -9.114          132.980            0.096           1.0
+H legacy carry-realised on swap scale, vol-tgt 10% dampened, cap 3x 0          3.482         3.482    3.921       0.409    0.117        -0.343     -0.152  -7.735          104.499            0.688           1.0
+                                                                    1          3.482         3.482    3.920       0.409    0.117        -0.343     -0.152  -7.735          104.496            0.688           1.0
+                                                                    2          3.481         3.482    3.920       0.409    0.117        -0.343     -0.152  -7.734          104.492            0.688           1.0
+                                                                    5          3.480         3.482    3.918       0.408    0.117        -0.343     -0.152  -7.734          104.482            0.688           1.0
+
+  Baselines (OOS)
+                        sharpe  sortino  ann_return  ann_vol  max_drawdown  worst_day   skew  excess_kurtosis
+baseline                                                                                                     
+SVXY buy&hold (excess)   0.344    0.403       0.177    0.514        -0.954     -0.830 -7.902          174.626
+SPY buy&hold (excess)    0.757    1.063       0.135    0.179        -0.338     -0.109 -0.311           14.654
+
+  Diagnostic: slowing the signal to the ladder's effective speed
+                                                                                       sharpe  turnover_x_yr  max_dd
+model                            position                                                                           
+B real SVXY, unlevered           soft daily position                                    0.018         15.114  -0.698
+                                 soft position, 21d trailing mean (ladder-equivalent)   0.141          3.169  -0.709
+E MTM swap (cm 1m), unlevered 1x soft daily position                                    0.032         15.114  -0.899
+                                 soft position, 21d trailing mean (ladder-equivalent)   0.290          3.169  -0.766
+
+  Block-bootstrap 95% CI on Sharpe (21d blocks)
+                                           sharpe  ci95_lo  ci95_hi  nw_sharpe
+model                                                                         
+B real SVXY, unlevered                      0.018   -0.537    0.781      0.017
+C real SVXY, vol-tgt 10% dampened, cap 3x  -0.078   -0.668    0.705     -0.071
+E MTM swap (cm 1m), unlevered 1x            0.032   -0.469    0.801      0.032
+E constant short (swap MTM)                 0.477   -0.236    1.364      0.448
+
+  Sub-period Sharpe (soft position)
+                                                     sharpe  max_dd
+model                                     period                   
+B real SVXY, unlevered                    2016-2019   0.183  -0.604
+                                          2020-2022  -0.634  -0.277
+                                          2023-2026   0.036  -0.365
+E MTM swap (cm 1m), unlevered 1x          2016-2019   0.059  -0.813
+                                          2020-2022  -0.524  -0.475
+                                          2023-2026   0.327  -0.606
+C real SVXY, vol-tgt 10% dampened, cap 3x 2016-2019   0.206  -0.141
+                                          2020-2022  -0.624  -0.081
+                                          2023-2026  -0.138  -0.153
+
+TRIAL COUNT: 113 evaluations (position x P&L model x config x cost), 47 distinct (position, model) pairs; no parameter was tuned on 2016+.
