@@ -1,0 +1,287 @@
+﻿
+
+21d payoff forecast quality, TEST 2016+ (always-short hit rate = 0.838)
+                          model     n     ic  ic_lo  ic_hi    hit  hit_lo  hit_hi
+0  GRU/LSTM ensemble (cls head)  2591 -0.080 -0.232  0.074  0.838   0.783   0.891
+1  GRU/LSTM ensemble (reg head)  2591 -0.058 -0.213  0.077  0.838   0.783   0.891
+2                         Ridge  2591  0.085 -0.067  0.225  0.814   0.759   0.867
+3                    HAR-RV OLS  2591  0.030 -0.116  0.161  0.836   0.781   0.889
+4                  HistGB (cls)  2591 -0.109 -0.242  0.031  0.811   0.753   0.864
+5                  HistGB (reg)  2591 -0.034 -0.148  0.089  0.766   0.711   0.822
+6          Legacy VRP-rank rule  2591  0.010 -0.106  0.130  0.491   0.431   0.552
+7                  Always short  2591    NaN    NaN    NaN  0.838   0.783   0.891
+
+same, DEV 2011-05..2015 (always-short hit rate = 0.855)
+                          model     n     ic  ic_lo  ic_hi    hit  hit_lo  hit_hi
+0  GRU/LSTM ensemble (cls head)  1135  0.117 -0.098  0.342  0.800   0.736   0.887
+1  GRU/LSTM ensemble (reg head)  1135  0.026 -0.178  0.249  0.841   0.782   0.920
+2                         Ridge  1135 -0.176 -0.323 -0.002  0.737   0.641   0.833
+3                    HAR-RV OLS  1135 -0.116 -0.294  0.044  0.716   0.638   0.802
+4                  HistGB (cls)  1135  0.088 -0.082  0.260  0.804   0.725   0.881
+5                  HistGB (reg)  1135 -0.126 -0.257  0.019  0.639   0.520   0.736
+6          Legacy VRP-rank rule  1135 -0.006 -0.160  0.161  0.464   0.390   0.541
+7                  Always short  1135    NaN    NaN    NaN  0.855   0.789   0.926
+
+IC differences (test)
+          a                b  ic_diff     lo     hi
+0      rnn            ridge   -0.166 -0.333  0.011
+1      rnn              har   -0.110 -0.321  0.111
+2      rnn              hgb    0.028 -0.156  0.179
+3      rnn  legacy_vrp_rank   -0.090 -0.304  0.131
+4  rnn_reg            ridge   -0.143 -0.321  0.013
+5      hgb            ridge   -0.194 -0.324 -0.032
+6    ridge              har    0.055 -0.086  0.190
+
+Brier skill (test): {'rnn': -0.1108, 'hgb': -0.2236}
+   mean_pred   freq    n
+0      0.607  0.869  260
+1      0.674  0.861  259
+2      0.716  0.846  259
+3      0.748  0.830  259
+4      0.777  0.807  259
+5      0.802  0.795  259
+6      0.823  0.892  259
+7      0.855  0.865  259
+8      0.884  0.880  259
+9      0.917  0.737  259
+
+seed stability {'member_ic': [-0.026767330134548063, -0.13135208387524094, -0.08685753661923652, -0.06115480107664593, 
+-0.030239871101624776], 'member_sharpe_net': [np.float64(0.30615883371322067), np.float64(0.3479242388597268), 
+np.float64(0.320293782659686), np.float64(0.3735753060400088), np.float64(0.32211673745326025)], 'ensemble_ic': 
+-0.0803944044391748, 'mean_pairwise_corr': 0.680483912620739}
+
+ECON SVXY (21d-target signals), exposure=(s+1)/2, 2bps, 2016+
+                       strategy  sharpe_gross  sharpe_net  sortino_net  ann_excess_net  ann_vol  max_drawdown  
+worst_day    skew  ex_kurt  avg_exposure  turnover_ann  pct_invested     n
+0  GRU/LSTM ensemble (cls head)         0.336       0.334        0.290           0.133    0.397        -0.848     
+-0.638  -7.763  171.371         0.781         2.463         1.000  2612
+1  GRU/LSTM ensemble (reg head)         0.353       0.353        0.307           0.128    0.364        -0.811     
+-0.584  -7.726  169.544         0.734         1.739         1.000  2612
+2                         Ridge         0.402       0.399        0.367           0.128    0.321        -0.676     
+-0.398  -4.678   69.506         0.686         4.834         1.000  2612
+3                    HAR-RV OLS         0.338       0.334        0.291           0.113    0.339        -0.772     
+-0.538  -7.584  163.949         0.672         6.423         1.000  2612
+4                  HistGB (cls)         0.262       0.259        0.217           0.118    0.454        -0.928     
+-0.788  -9.554  231.672         0.837         6.771         1.000  2612
+5                  HistGB (reg)         0.233       0.229        0.189           0.084    0.366        -0.863     
+-0.648 -10.276  254.153         0.677         7.236         1.000  2612
+6          Legacy VRP-rank rule         0.059       0.049        0.038           0.021    0.420        -0.945     
+-0.830 -13.433  385.922         0.511        20.194         0.972  2612
+7                  Always short         0.344       0.344        0.297           0.177    0.514        -0.952     
+-0.830  -7.902  174.626         1.000         0.000         1.000  2612
+0                Buy & hold SPY         0.757       0.757        0.916           0.135    0.179        -0.337     
+-0.109  -0.311   14.654         1.000         0.000         1.000  2612
+
+ECON longflat
+                        strategy  sharpe_gross  sharpe_net  sortino_net  ann_excess_net  ann_vol  max_drawdown  
+worst_day    skew  ex_kurt  avg_exposure  turnover_ann  pct_invested     n
+0  GRU/LSTM ensemble (cls head)         0.313       0.309        0.270           0.089    0.287        -0.665     
+-0.447  -7.074  150.485         0.561         4.927         1.000  2612
+1  GRU/LSTM ensemble (reg head)         0.371       0.367        0.326           0.080    0.218        -0.552     
+-0.338  -7.089  149.116         0.468         3.479         1.000  2612
+2                         Ridge         0.457       0.447        0.425           0.076    0.171        -0.236     
+-0.143  -2.788   26.425         0.383         8.660         0.939  2612
+3                    HAR-RV OLS         0.308       0.293        0.258           0.050    0.172        -0.425     
+-0.246  -6.148  115.322         0.343        12.816         0.998  2612
+4                  HistGB (cls)         0.179       0.173        0.139           0.070    0.407        -0.905     
+-0.747 -11.149  288.885         0.684        12.285         0.959  2612
+5                  HistGB (reg)         0.145       0.136        0.104           0.033    0.247        -0.726     
+-0.467 -13.154  351.102         0.387        11.799         0.895  2612
+6          Legacy VRP-rank rule        -0.056      -0.069       -0.042          -0.026    0.384        -0.940     
+-0.830 -17.134  549.024         0.271        23.781         0.510  2612
+7                  Always short         0.344       0.344        0.297           0.177    0.514        -0.952     
+-0.830  -7.902  174.626         1.000         0.000         1.000  2612
+
+ECON sign
+                        strategy  sharpe_gross  sharpe_net  sortino_net  ann_excess_net  ann_vol  max_drawdown  
+worst_day    skew  ex_kurt  avg_exposure  turnover_ann  pct_invested     n
+0  GRU/LSTM ensemble (cls head)         0.344       0.344        0.297           0.177    0.514        -0.952      
+-0.83  -7.902  174.626         1.000         0.000         1.000  2612
+1  GRU/LSTM ensemble (reg head)         0.344       0.344        0.297           0.177    0.514        -0.952      
+-0.83  -7.902  174.626         1.000         0.000         1.000  2612
+2                         Ridge         0.593       0.591        0.580           0.246    0.416        -0.545      
+-0.32  -2.336   19.949         0.941         4.824         0.941  2612
+3                    HAR-RV OLS         0.336       0.336        0.290           0.172    0.513        -0.952      
+-0.83  -7.956  176.456         0.998         0.579         0.998  2612
+4                  HistGB (cls)         0.222       0.220        0.187           0.112    0.507        -0.954      
+-0.83  -8.217  184.286         0.960         4.631         0.960  2612
+5                  HistGB (reg)         0.132       0.128        0.105           0.063    0.488        -0.955      
+-0.83  -9.134  213.493         0.899        10.227         0.899  2612
+6          Legacy VRP-rank rule        -0.079      -0.091       -0.060          -0.042    0.458        -0.956      
+-0.83 -10.745  274.712         0.513        27.110         0.513  2612
+7                  Always short         0.344       0.344        0.297           0.177    0.514        -0.952      
+-0.83  -7.902  174.626         1.000         0.000         1.000  2612
+
+constant exposure with same avg exposure
+                        strategy  avg_exposure  sharpe_net  max_drawdown  worst_day
+0  GRU/LSTM ensemble (cls head)         0.781       0.344        -0.861     -0.648
+1  GRU/LSTM ensemble (reg head)         0.734       0.344        -0.835     -0.609
+2                         Ridge         0.686       0.344        -0.805     -0.569
+3                    HAR-RV OLS         0.672       0.344        -0.796     -0.557
+4                  HistGB (cls)         0.837       0.344        -0.890     -0.694
+5                  HistGB (reg)         0.677       0.344        -0.799     -0.562
+6          Legacy VRP-rank rule         0.511       0.344        -0.669     -0.424
+7                  Always short         1.000       0.344        -0.952     -0.830
+
+Paired Sharpe differences (net, linear exposure)
+                  a                b  sharpe_diff     lo     hi
+0              rnn     always_short       -0.009 -0.077  0.049
+1              rnn            ridge       -0.065 -0.175  0.107
+2              rnn              har        0.000 -0.079  0.084
+3              rnn              hgb        0.075 -0.064  0.162
+4              rnn  legacy_vrp_rank        0.286  0.046  0.480
+5            ridge     always_short        0.056 -0.141  0.169
+6              har     always_short       -0.010 -0.086  0.050
+7              hgb     always_short       -0.085 -0.185  0.064
+8  legacy_vrp_rank     always_short       -0.295 -0.486 -0.079
+
+Paired Sharpe diff vs always-short, other exposure maps
+          map            model  sharpe_diff_vs_always_short     lo     hi
+0   longflat              rnn                       -0.035 -0.211  0.103
+1   longflat          rnn_reg                        0.023 -0.123  0.123
+2   longflat            ridge                        0.103 -0.488  0.568
+3   longflat              har                       -0.051 -0.391  0.195
+4   longflat              hgb                       -0.171 -0.389  0.126
+5   longflat          hgb_reg                       -0.208 -0.450  0.229
+6   longflat  legacy_vrp_rank                       -0.413 -0.724 -0.102
+7       sign              rnn                        0.000  0.000  0.000
+8       sign          rnn_reg                        0.000  0.000  0.000
+9       sign            ridge                        0.247 -0.140  0.583
+10      sign              har                       -0.008 -0.069  0.047
+11      sign              hgb                       -0.123 -0.282 -0.008
+12      sign          hgb_reg                       -0.216 -0.395 -0.039
+13      sign  legacy_vrp_rank                       -0.435 -0.735 -0.187
+
+Signal summary
+                               pct_days_signal_below_0_test  pct_days_signal_below_0_dev  signal_mean_test  
+signal_sd_test
+GRU/LSTM ensemble (cls head)                         0.000                        0.100             0.561           
+0.185
+GRU/LSTM ensemble (reg head)                         0.000                        0.051             0.468           
+0.090
+Ridge                                                0.059                        0.126             0.372           
+0.215
+HAR-RV OLS                                           0.002                        0.163             0.343           
+0.122
+HistGB (cls)                                         0.040                        0.058             0.674           
+0.285
+HistGB (reg)                                         0.101                        0.243             0.354           
+0.289
+Legacy VRP-rank rule                                 0.484                        0.557             0.023           
+0.598
+Always short                                         0.000                        0.000             1.000           
+0.000
+
+Sharpe CIs
+                        strategy  sharpe_net     lo     hi
+0  GRU/LSTM ensemble (cls head)       0.335 -0.248  1.224
+1  GRU/LSTM ensemble (reg head)       0.353 -0.254  1.233
+2                         Ridge       0.399 -0.162  1.164
+3                    HAR-RV OLS       0.334 -0.268  1.202
+4                  HistGB (cls)       0.259 -0.322  1.212
+5                  HistGB (reg)       0.229 -0.390  1.192
+6          Legacy VRP-rank rule       0.049 -0.489  0.960
+7                  Always short       0.344 -0.254  1.227
+
+Variance-swap (held-to-maturity) economics, 2016+, payoff in vol-pt^2
+                        strategy  avg_exposure  mean_payoff_always_short  mean_payoff_weighted  ratio_vs_always_short  
+worst_payoff_weighted  timing_cov  timing_cov_lo  timing_cov_hi  tranche_sharpe
+0  GRU/LSTM ensemble (cls head)         0.780                     5.964                 5.177                  0.868   
+            -454.957       0.524         -0.296          1.820           0.455
+1  GRU/LSTM ensemble (reg head)         0.734                     5.964                 4.531                  0.760   
+            -464.858       0.154         -0.276          0.689           0.397
+2                         Ridge         0.687                     5.964                 5.336                  0.895   
+            -411.767       1.241         -0.308          3.903           0.641
+3                    HAR-RV OLS         0.671                     5.964                 4.100                  0.687   
+            -449.636       0.096         -0.301          0.736           0.395
+4                  HistGB (cls)         0.837                     5.964                 5.053                  0.847   
+            -616.412       0.062         -0.486          0.524           0.372
+5                  HistGB (reg)         0.677                     5.964                 4.092                  0.686   
+            -527.115       0.053         -0.308          0.407           0.359
+6          Legacy VRP-rank rule         0.513                     5.964                 2.290                  0.384   
+            -674.564      -0.766         -4.111          1.264           0.167
+7                  Always short         1.000                     5.964                 5.964                  1.000   
+            -679.960       0.000          0.000          0.000           0.353
+
+5d SVXY forward return sign (always-long hit rate 0.615)
+                          model     n     ic  ic_lo  ic_hi    hit  hit_lo  hit_hi
+0  GRU/LSTM ensemble (cls head)  2607 -0.022 -0.097  0.046  0.613   0.582   0.646
+1  GRU/LSTM ensemble (reg head)  2607  0.077  0.013  0.162  0.600   0.567   0.633
+2                         Ridge  2607  0.055 -0.008  0.128  0.588   0.553   0.622
+3                    HAR-RV OLS  2607  0.009 -0.049  0.081  0.595   0.559   0.631
+4                  HistGB (cls)  2607  0.073 -0.014  0.158  0.573   0.539   0.608
+5                  HistGB (reg)  2607  0.079  0.003  0.163  0.562   0.529   0.605
+6          Legacy VRP-rank rule  2607  0.010 -0.056  0.078  0.473   0.441   0.507
+7                  Always short  2607    NaN    NaN    NaN  0.615   0.582   0.647
+                       strategy  sharpe_gross  sharpe_net  sortino_net  ann_excess_net  ann_vol  max_drawdown  
+worst_day    skew  ex_kurt  avg_exposure  turnover_ann  pct_invested     n
+0  GRU/LSTM ensemble (cls head)         0.336       0.335        0.288           0.098    0.293        -0.731     
+-0.477  -8.064  179.830         0.566         1.943         1.000  2612
+1  GRU/LSTM ensemble (reg head)         0.333       0.331        0.278           0.105    0.316        -0.783     
+-0.560  -9.832  248.464         0.568         3.593         1.000  2612
+2                         Ridge         0.293       0.290        0.240           0.088    0.303        -0.777     
+-0.554 -10.679  279.740         0.543         3.227         1.000  2612
+3                    HAR-RV OLS         0.252       0.248        0.203           0.080    0.321        -0.810     
+-0.608 -11.722  323.338         0.550         5.544         1.000  2612
+4                  HistGB (cls)         0.322       0.314        0.256           0.113    0.360        -0.867     
+-0.690 -12.153  341.499         0.599        14.015         1.000  2612
+5                  HistGB (reg)         0.347       0.339        0.272           0.116    0.342        -0.844     
+-0.677 -13.064  381.872         0.546        13.041         1.000  2612
+6          Legacy VRP-rank rule         0.059       0.049        0.038           0.021    0.420        -0.945     
+-0.830 -13.433  385.922         0.511        20.194         0.972  2612
+7                  Always short         0.344       0.344        0.297           0.177    0.514        -0.952     
+-0.830  -7.902  174.626         1.000         0.000         1.000  2612
+
+Events
+                   event                         model  signal_before  mean_exposure  min_exposure  strategy_return  
+svxy_return
+0   2018-02 Volmageddon  GRU/LSTM ensemble (cls head)          0.322          0.762         0.659           -0.767     
+  -0.908
+1   2018-02 Volmageddon  GRU/LSTM ensemble (reg head)          0.394          0.718         0.677           -0.726     
+  -0.908
+2   2018-02 Volmageddon                         Ridge          0.584          0.700         0.438           -0.582     
+  -0.908
+3   2018-02 Volmageddon                    HAR-RV OLS          0.434          0.677         0.573           -0.684     
+  -0.908
+4   2018-02 Volmageddon                  HistGB (cls)          0.988          0.962         0.894           -0.885     
+  -0.908
+5   2018-02 Volmageddon                  HistGB (reg)          0.798          0.777         0.136           -0.800     
+  -0.908
+6   2018-02 Volmageddon          Legacy VRP-rank rule         -0.571          0.418         0.004           -0.895     
+  -0.908
+7   2018-02 Volmageddon                  Always short          1.000          1.000         1.000           -0.908     
+  -0.908
+8         2020-03 COVID  GRU/LSTM ensemble (cls head)          0.223          0.655         0.531           -0.353     
+  -0.465
+9         2020-03 COVID  GRU/LSTM ensemble (reg head)          0.352          0.640         0.542           -0.331     
+  -0.465
+10        2020-03 COVID                         Ridge         -0.314          0.503         0.121           -0.223     
+  -0.465
+11        2020-03 COVID                    HAR-RV OLS          0.229          0.625         0.528           -0.278     
+  -0.465
+12        2020-03 COVID                  HistGB (cls)          0.630          0.716         0.475           -0.396     
+  -0.465
+13        2020-03 COVID                  HistGB (reg)          0.515          0.631         0.433           -0.336     
+  -0.465
+14        2020-03 COVID          Legacy VRP-rank rule          0.881          0.423         0.004           -0.415     
+  -0.465
+15        2020-03 COVID                  Always short          1.000          1.000         1.000           -0.465     
+  -0.465
+16     2022 bear market  GRU/LSTM ensemble (cls head)          0.849          0.838         0.595           -0.055     
+  -0.047
+17     2022 bear market  GRU/LSTM ensemble (reg head)          0.660          0.752         0.658           -0.041     
+  -0.047
+18     2022 bear market                         Ridge          0.738          0.679         0.295           -0.073     
+  -0.047
+19     2022 bear market                    HAR-RV OLS          0.450          0.646         0.536           -0.002     
+  -0.047
+20     2022 bear market                  HistGB (cls)          0.943          0.898         0.564           -0.053     
+  -0.047
+21     2022 bear market                  HistGB (reg)          0.544          0.730         0.451           -0.058     
+  -0.047
+22     2022 bear market          Legacy VRP-rank rule         -0.992          0.392         0.004            0.036     
+  -0.047
+23     2022 bear market                  Always short          1.000          1.000         1.000           -0.047     
+  -0.047
+
+

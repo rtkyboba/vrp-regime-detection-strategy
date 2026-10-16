@@ -1,0 +1,9 @@
+final 21d rnn
+final 21d ridge
+final 21d har
+final 21d hgb
+final 5d rnn
+final 5d ridge
+final 5d har
+final 5d hgb
+saved preds.npz

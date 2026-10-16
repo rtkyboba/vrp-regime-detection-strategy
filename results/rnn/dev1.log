@@ -1,0 +1,8 @@
+dev rnn gru_h16_L40_do0.2_wd0.001
+dev rnn gru_h32_L40_do0.2_wd0.001
+dev rnn lstm_h16_L40_do0.2_wd0.001
+dev rnn lstm_h32_L40_do0.2_wd0.001
+dev rnn gru_h32_L20_do0.4_wd0.01
+dev rnn lstm_h64_L40_do0.4_wd0.01
+dev hgb {'max_depth': 3, 'max_iter': 150}
+dev har har

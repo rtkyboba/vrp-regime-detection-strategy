@@ -1,0 +1,8 @@
+dev rnn gru_h16_L20_do0.2_wd0.001
+dev rnn gru_h32_L20_do0.2_wd0.001
+dev rnn lstm_h16_L20_do0.2_wd0.001
+dev rnn lstm_h32_L20_do0.2_wd0.001
+dev rnn gru_h16_L20_do0.2_wd0.01
+dev rnn gru_h64_L20_do0.4_wd0.01
+dev hgb {'max_depth': 2, 'max_iter': 100}
+dev ridge ridge

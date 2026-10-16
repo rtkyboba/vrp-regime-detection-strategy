@@ -1,0 +1,49 @@
+{
+  "frozen": {
+    "rnn": {
+      "cell": "gru",
+      "hidden": 16,
+      "seq_len": 20,
+      "dropout": 0.2,
+      "weight_decay": 0.01,
+      "lr": 0.002,
+      "max_epochs": 40,
+      "patience": 6,
+      "batch": 128
+    },
+    "hgb": {
+      "max_depth": 3,
+      "max_iter": 150
+    },
+    "n_trials_dev": 16,
+    "criterion": "mean Spearman IC of (2P-1) vs scaled 21d payoff, walk-forward dates < 2016 with realised labels"
+  },
+  "seed": {
+    "member_ic": [
+      -0.026767330134548063,
+      -0.13135208387524094,
+      -0.08685753661923652,
+      -0.06115480107664593,
+      -0.030239871101624776
+    ],
+    "member_sharpe_net": [
+      0.30615883371322067,
+      0.3479242388597268,
+      0.320293782659686,
+      0.3735753060400088,
+      0.32211673745326025
+    ],
+    "ensemble_ic": -0.0803944044391748,
+    "mean_pairwise_corr": 0.680483912620739
+  },
+  "brier_skill": {
+    "rnn": -0.11082275958425636,
+    "hgb": -0.22364660321797913
+  },
+  "base_rate_test": 0.8382863759166345,
+  "base_rate_dev": 0.8546255506607929,
+  "base5": 0.6148830072880705,
+  "first_pred": "2011-05-31",
+  "last_pred": "2026-05-22",
+  "n_test_dates": 2612
+}
