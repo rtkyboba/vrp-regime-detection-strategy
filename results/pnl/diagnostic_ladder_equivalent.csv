@@ -1,0 +1,5 @@
+model,position,sharpe,turnover_x_yr,max_dd
+"B real SVXY, unlevered",soft daily position,0.018275966668261492,15.114240484537595,-0.6980212335877434
+"B real SVXY, unlevered","soft position, 21d trailing mean (ladder-equivalent)",0.14077259208904833,3.1690928560016673,-0.7093756118467656
+"E MTM swap (cm 1m), unlevered 1x",soft daily position,0.031690772965727886,15.114240484537595,-0.8987490860357887
+"E MTM swap (cm 1m), unlevered 1x","soft position, 21d trailing mean (ladder-equivalent)",0.2903583050586008,3.1690928560016673,-0.7656577501914831
