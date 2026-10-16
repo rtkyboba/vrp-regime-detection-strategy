@@ -1,0 +1,38 @@
+name,fam,desc,kind,headline
+vm_implied_m,1 vol-managed,"SPY x (hist mean VIX / VIX), cap 1.5, monthly",w,True
+vm_realised_m,1 vol-managed,"SPY x (hist vol / 21d realised vol), cap 1.5, monthly",w,False
+vm_implied_d,1 vol-managed,"as vm_implied_m, rebalanced daily",w,False
+vm_realised_d,1 vol-managed,"as vm_realised_m, rebalanced daily",w,False
+vm_implied_m_cap1,1 vol-managed,"vm_implied_m, no leverage (cap 1.0)",w,False
+vm_implied_stress,1 vol-managed,vm_implied_m x0.5 when VIX/VIX3M>=1,w,False
+vm_realised_stress,1 vol-managed,vm_realised_m x0.5 when VIX/VIX3M>=1,w,False
+ts_bin_cash,2 term-structure,SVXY if VIX/VIX3M<1 else cash,w,True
+ts_bin9d_cash,2 term-structure,SVXY if VIX/VIX3M<1 and VIX9D/VIX<1 else cash,w,False
+ts_ramp_cash,2 term-structure,"SVXY exposure ramp 0@1.0 -> 1@0.9 of VIX/VIX3M, else cash",w,False
+ts_ramp9d_cash,2 term-structure,"ramp, also min with VIX9D/VIX ramp",w,False
+ts_schmitt_cash,2 term-structure,"hysteresis: on <0.95, off >1.00",w,False
+ts_deadband_cash,2 term-structure,ramp with 0.25 trade deadband,w,False
+ts_bin_spy,2 term-structure,SVXY if VIX/VIX3M<1 else SPY,w,True
+ts_ramp_spy,2 term-structure,ramp: e*SVXY + (1-e)*SPY,w,False
+ts_schmitt_spy,2 term-structure,"hysteresis, off-state SPY",w,False
+ts_deadband_spy,2 term-structure,"ramp with deadband, off-state SPY",w,False
+spike_buy,3 spike,SVXY 15d after VIX spike once VIX/VIX3M<1 and VIX retraced 10%,w,True
+spike_buy_h21,3 spike,"as spike_buy, hold 21d",w,False
+derisk_highvol,3 spike,"SVXY always, flat when VIX 252d rank > 0.8",w,True
+highvol_only,3 spike,SVXY only when VIX rank > 0.8 and VIX/VIX3M<1,w,False
+svxy_vvix,4 crash filter,"SVXY always, flat when VVIX 252d rank > 0.8",w,False
+svxy_skew,4 crash filter,"SVXY always, flat when SKEW rank > 0.8",w,False
+svxy_either,4 crash filter,"SVXY always, flat when VVIX or SKEW rank > 0.8",w,False
+ts_vvix,4 crash filter,ts_bin_cash and VVIX rank <= 0.8,w,True
+ts_skew,4 crash filter,ts_bin_cash and SKEW rank <= 0.8,w,False
+ts_either,4 crash filter,ts_bin_cash and both gauges calm,w,False
+spy_lv5,5 hedge,"95% SPY + 5% long vol (VXX, -SVXY before 2018), daily mix",w,True
+spy_lv2,5 hedge,98% SPY + 2% long vol,w,False
+spy_lv10,5 hedge,90% SPY + 10% long vol,w,False
+spy_vxx5,5 hedge,95% SPY + 5% real VXX (2018-01-25 on only),w,False
+putwrite,5 hedge,"cash-secured monthly ATM put-write, BS at 0.93 x VIX (approximation)",pw,True
+putwrite_iv100,5 hedge,put-write priced at 1.00 x VIX,pw,False
+putwrite_iv085,5 hedge,put-write priced at 0.85 x VIX,pw,False
+blend_rp_all,6 blend,"inverse-vol blend of SPY + ['vm_implied_m', 'ts_bin_cash', 'spike_buy', 'derisk_highvol', 'ts_vvix', 'putwrite']",blend,True
+blend_rp_survivors,6 blend,"inverse-vol blend of SPY + ['spike_buy', 'putwrite']",blend,True
+blend_ew_survivors,6 blend,"equal-weight blend of SPY + ['spike_buy', 'putwrite']",blend,True
