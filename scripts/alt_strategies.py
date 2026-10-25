@@ -12,12 +12,9 @@ a priori (see the docstrings in vrp_strategy.alt_strategies); every variant
 evaluated is registered in VARIANTS and counted as a trial; the blend's sleeve
 selection uses pre-2016 data only and 2016+ is reported as the test.
 """
-import sys
 import warnings
-from pathlib import Path
 
 warnings.filterwarnings("ignore")
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import numpy as np
 import pandas as pd

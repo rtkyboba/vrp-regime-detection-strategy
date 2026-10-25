@@ -1,8 +1,14 @@
 import numpy as np
 import pandas as pd
 
-from vrp_strategy.combiner import (calm_score, combine_mean, combine_product, combine_veto,
-                                   forecast_strength, trailing_ic_weights)
+from vrp_strategy.combiner import (
+    calm_score,
+    combine_mean,
+    combine_product,
+    combine_veto,
+    forecast_strength,
+    trailing_ic_weights,
+)
 
 
 def _series(n=900, seed=0):

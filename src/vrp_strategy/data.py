@@ -2,13 +2,17 @@
 
 Everything downstream should load through here so every experiment sees the
 same dates, the same train/test split and the same risk-free series.
+
+Raw price files are *not* stored in git. Create them with
+``python scripts/fetch_data.py`` (pinned end date, see ``data/MANIFEST.json``).
+Set ``VRP_ROOT`` to point the package at a data directory outside the checkout.
 """
+import os
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.environ.get("VRP_ROOT", Path(__file__).resolve().parents[2]))
 RAW = ROOT / "data" / "raw"
 PROCESSED = ROOT / "data" / "processed"
 
@@ -16,24 +20,44 @@ PROCESSED = ROOT / "data" / "processed"
 # strictly before this date, or be re-fitted walk-forward (see docs/EVAL_PROTOCOL.md).
 SPLIT = "2016-01-01"
 
+# name -> Yahoo Finance ticker. Single source of truth for the fetch script.
+TICKERS = {
+    "spx": "^GSPC",
+    "vix": "^VIX",
+    "vix3m": "^VIX3M",
+    "vix6m": "^VIX6M",
+    "vix9d": "^VIX9D",
+    "vvix": "^VVIX",
+    "skew": "^SKEW",
+    "svxy": "SVXY",
+    "vxx": "VXX",
+    "spy": "SPY",
+    "irx": "^IRX",
+}
+
 
 def load_signals() -> pd.DataFrame:
-    """Daily signal table built by notebook 02 (2006-08 -> present).
+    """Daily signal table (2006-08 -> data end), built from the raw SPX/VIX/VIX3M files.
 
-    Columns: spx, vix, vix3m, rv_30, vrp, vrp_vol, slope, log_ret,
-    rv_daily, iv_daily.
+    Columns: spx, vix, vix3m, rv_30, vrp, vrp_vol, slope, log_ret, rv_daily, iv_daily.
+    Identical to what notebook 02 writes to data/processed/signals.csv (tested).
     """
-    return pd.read_csv(PROCESSED / "signals.csv", index_col=0, parse_dates=True)
+    from .signals import build_signals
+
+    return build_signals()
 
 
 def load_raw(name: str) -> pd.Series:
-    """One raw close series by file stem, e.g. 'svxy', 'vix9d', 'vvix', 'vix6m',
+    """One raw close series by name, e.g. 'svxy', 'vix9d', 'vvix', 'vix6m',
     'skew', 'spy', 'vxx' (VXX only from 2018-01), 'irx' (13-week T-bill, % yield).
 
-    Handles both the yfinance multi-header files from notebook 01 (spx, vix,
-    vix3m) and the single-header files fetched later.
+    Handles both the multi-header yfinance files from notebook 01 (spx, vix,
+    vix3m) and the single-header files written by scripts/fetch_data.py.
     """
-    df = pd.read_csv(RAW / f"{name}.csv", index_col=0)
+    path = RAW / f"{name}.csv"
+    if not path.exists():
+        raise FileNotFoundError(f"{path} is missing. Run `python scripts/fetch_data.py` to download the raw data.")
+    df = pd.read_csv(path, index_col=0)
     df = df[pd.to_datetime(df.index, errors="coerce").notna()]
     df.index = pd.to_datetime(df.index)
     df.index.name = "date"

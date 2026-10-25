@@ -10,13 +10,11 @@ architecture (docs/EVAL_PROTOCOL.md rule 2).  Outputs go to results/rnn/.
 """
 import argparse
 import json
-import sys
 import warnings
 from pathlib import Path
 
 warnings.filterwarnings("ignore")
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
 
 import numpy as np
 import pandas as pd

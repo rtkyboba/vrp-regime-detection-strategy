@@ -25,9 +25,8 @@ SVXY return over t+1..t+5.
 """
 from __future__ import annotations
 
-import dataclasses
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Optional, Sequence
+from typing import Callable, List, Optional, Sequence
 
 import numpy as np
 import pandas as pd

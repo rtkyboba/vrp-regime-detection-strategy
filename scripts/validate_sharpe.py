@@ -16,12 +16,9 @@ scripts/audit_sharpe.py):
   svxy_buy_hold            SVXY long-only (the instrument itself), excess of rf
 """
 import argparse
-import sys
 import warnings
-from pathlib import Path
 
 warnings.filterwarnings("ignore")
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import matplotlib
 

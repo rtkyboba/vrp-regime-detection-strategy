@@ -24,19 +24,16 @@ from __future__ import annotations
 
 import argparse
 import os
-import sys
 import time
 import warnings
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import partial
-from pathlib import Path
 
 os.environ.setdefault("OMP_NUM_THREADS", "1")
 os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
 os.environ.setdefault("MKL_NUM_THREADS", "1")
 warnings.filterwarnings("ignore")
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import numpy as np
 import pandas as pd
@@ -695,7 +692,6 @@ def stage_reference(W):
     """NON-CAUSAL reference: the original recipe (fit once on 2006-2015, Viterbi
     `predict` over the whole 2016+ block) vs the same model filtered causally,
     evaluated on real SVXY.  Quantifies what look-ahead buys.  Not a candidate method."""
-    from hmmlearn import hmm
     F = rm.build_features().dropna(subset=["rv_30", "vrp_vol", "slope"])
     cols, sort = rm.FEATURE_SETS["orig"]
     tr, te = F[F.index < SPLIT_TS], F[F.index >= SPLIT_TS]

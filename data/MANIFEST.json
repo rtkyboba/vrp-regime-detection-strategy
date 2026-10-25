@@ -1,0 +1,68 @@
+{
+  "irx": {
+    "first": "1990-01-02",
+    "last": "2026-05-22",
+    "rows": 9134,
+    "sha256": "95999467055cdc2317b5d4a4561c0a70a3e4a87ec9e02bc91d0a8326f72f531a"
+  },
+  "skew": {
+    "first": "1990-01-02",
+    "last": "2026-05-22",
+    "rows": 9091,
+    "sha256": "9c4087e7ffec38506c5a0d97f976664012136f423cc57c8f0e86ce75c8fad764"
+  },
+  "spx": {
+    "first": "1990-01-02",
+    "last": "2026-05-22",
+    "rows": 9165,
+    "sha256": "b457d1af10499c36b47186d2b8b2fedb2f106792de5197318e479f587692b40c"
+  },
+  "spy": {
+    "first": "1993-01-29",
+    "last": "2026-05-22",
+    "rows": 8386,
+    "sha256": "36b49b67660f5c7f47fd3eeb72b2cdd36cebf5fc8e13816648b8c00bdcf977b9"
+  },
+  "svxy": {
+    "first": "2011-10-04",
+    "last": "2026-05-22",
+    "rows": 3680,
+    "sha256": "2737dcb2d1e00bc9ec19fabe158a1eb5d3f16ce10ec9842c21a932f60c868d4e"
+  },
+  "vix": {
+    "first": "1990-01-02",
+    "last": "2026-05-22",
+    "rows": 9165,
+    "sha256": "093c96b4cf5252fc50715b2d43811bfb15020480657caf604feaed8bf9fc31c9"
+  },
+  "vix3m": {
+    "first": "2006-07-17",
+    "last": "2026-05-22",
+    "rows": 4995,
+    "sha256": "ca5d5473eb63a1e5ab339cfb6717b2e19c8ef12acc514cd9d0b20e226d2bfbf5"
+  },
+  "vix6m": {
+    "first": "2008-01-02",
+    "last": "2026-05-22",
+    "rows": 4627,
+    "sha256": "db58f6bdcb8d3b220e9bb708ec8c9e937d1ea1deb1f4d30e2e6c83e5429d95d6"
+  },
+  "vix9d": {
+    "first": "2011-01-03",
+    "last": "2026-05-22",
+    "rows": 3870,
+    "sha256": "19ffefbfe86de2e03719db3f2e19044aa41ce6ac5403b3d40bfdefecc1790fe1"
+  },
+  "vvix": {
+    "first": "2007-01-03",
+    "last": "2026-05-22",
+    "rows": 4869,
+    "sha256": "445e7f74be281a4077a965fa51e5d81d253671e0b150121dfb186506376584f3"
+  },
+  "vxx": {
+    "first": "2018-01-25",
+    "last": "2026-05-22",
+    "rows": 2093,
+    "sha256": "07a46dd2644dd6830a81401c082fc50f8d21ad9200912ca2e76c47daeb08fa09"
+  }
+}

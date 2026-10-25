@@ -11,21 +11,19 @@ Control every variant is compared with a CONSTANT exposure equal to its own aver
         exposure (so "holds less" is not mistaken for timing skill) and with always-short.
 Writes results/combine/summary.csv and results/combine/equity.png.
 """
-import sys
 import warnings
-from pathlib import Path
 
 warnings.filterwarnings("ignore")
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 from vrp_strategy import combiner as cb
-from vrp_strategy.data import ROOT, SPLIT, asset_returns, load_raw, load_signals, rf_daily
+from vrp_strategy.data import ROOT, SPLIT, asset_returns, load_signals, rf_daily
 from vrp_strategy.pnl import backtest, hold_to_maturity
 from vrp_strategy.stats_tests import validate
 

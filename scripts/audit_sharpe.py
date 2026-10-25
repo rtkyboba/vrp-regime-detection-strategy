@@ -4,12 +4,9 @@
 
 Writes results/audit/audit_table.csv. See docs/EVAL_PROTOCOL.md for the summary.
 """
-import sys
 import warnings
-from pathlib import Path
 
 warnings.filterwarnings("ignore")
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import numpy as np
 import pandas as pd
@@ -17,7 +14,7 @@ from hmmlearn import hmm
 from sklearn.preprocessing import StandardScaler
 
 from vrp_strategy.backtest import raw_strategy_returns, vol_target_scale
-from vrp_strategy.data import SPLIT, ROOT, asset_returns, load_signals
+from vrp_strategy.data import ROOT, SPLIT, asset_returns, load_signals
 from vrp_strategy.metrics import performance_metrics
 from vrp_strategy.regimes import filtered_proba, state_order_by_feature
 

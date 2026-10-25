@@ -5,14 +5,12 @@
 One command reproduces every number in reports/01_pnl_realism.md and writes CSV/PNG files
 to results/pnl/. Run with the project venv, PYTHONPATH=<worktree>/src.
 """
-import sys
 import warnings
-from pathlib import Path
 
 warnings.filterwarnings("ignore")
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +20,7 @@ from sklearn.preprocessing import StandardScaler
 
 from vrp_strategy import pnl
 from vrp_strategy.backtest import raw_strategy_returns, vol_target_scale
-from vrp_strategy.data import ROOT, SPLIT, asset_returns, load_raw, load_signals, rf_daily
+from vrp_strategy.data import ROOT, SPLIT, asset_returns, load_signals, rf_daily
 from vrp_strategy.metrics import performance_metrics
 from vrp_strategy.regimes import filtered_proba, state_order_by_feature
 
