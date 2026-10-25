@@ -565,7 +565,6 @@ def reality_check(returns_matrix, benchmark=None, n_boot: int = 1000, mean_block
         z = (dev + np.sqrt(T) * mu) / omega
         stat_b = np.maximum(z.max(axis=1), 0.0)
         spa[name] = float((1 + (stat_b >= t_spa).sum()) / (n_boot + 1))
-    best = int(np.argmax(tstat))
     best_by_mean = int(np.argmax(dbar))
     return {"rc_pvalue": rc_p, "spa_pvalue": spa["consistent"], "spa_upper": spa["upper"], "spa_lower": spa["lower"],
             "best_rule": cols[best_by_mean] if cols else best_by_mean, "best_rule_idx": best_by_mean,

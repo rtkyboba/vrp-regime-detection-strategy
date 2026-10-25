@@ -4,6 +4,7 @@ import pandas as pd
 import pytest
 
 from vrp_strategy import alt_strategies as A
+from vrp_strategy import data
 
 STRATS = {
     "vm_implied": lambda P: A.vol_managed(P, "implied"),
@@ -22,9 +23,37 @@ STRATS = {
 }
 
 
+def synthetic_panel(n=2200, seed=0):
+    """Deterministic stand-in for ``A.build_panel()``: same columns, a persistent log-vol factor
+    that drives VIX, with SPY/SVXY moving against vol changes. Tests need structure, not market data,
+    so they run offline (CI) without the raw files."""
+    rng = np.random.default_rng(seed)
+    idx = pd.bdate_range("2010-06-01", periods=n)
+    lv = np.empty(n)
+    lv[0] = np.log(18.0)
+    for i in range(1, n):
+        lv[i] = lv[i - 1] + 0.05 * (np.log(18.0) - lv[i - 1]) + 0.06 * rng.standard_normal()
+    dlv = np.diff(lv, prepend=lv[0])
+    vix = np.exp(lv)
+    P = pd.DataFrame(index=idx)
+    P["spy"] = 0.0004 - 0.15 * dlv + 0.007 * rng.standard_normal(n)
+    P["svxy"] = (0.002 - 0.6 * dlv + 0.01 * rng.standard_normal(n)).clip(-0.9, 1.0)
+    P["vxx"] = -P["svxy"] + 0.003 * rng.standard_normal(n)
+    P.iloc[:1000, P.columns.get_loc("vxx")] = np.nan          # VXX only exists late in the sample
+    P["lv"] = P["vxx"].where(P["vxx"].notna(), -P["svxy"])
+    P["vix"] = vix
+    P["vix3m"] = vix * 1.05 + 0.3 * rng.standard_normal(n)
+    P["vix6m"] = vix * 1.08 + 0.3 * rng.standard_normal(n)
+    P["vix9d"] = vix * (0.97 + 0.03 * rng.standard_normal(n))
+    P["vvix"] = 90.0 + 10.0 * rng.standard_normal(n)
+    P["skew"] = 135.0 + 8.0 * rng.standard_normal(n)
+    P["rf"] = 0.0001
+    return P
+
+
 @pytest.fixture(scope="module")
 def panel():
-    return A.build_panel().loc["2010-06-01":]  # shorter for speed; includes all signals
+    return synthetic_panel()
 
 
 def _corrupt(P, cut, seed=0):
@@ -172,3 +201,9 @@ def test_vol_managed_cap_and_inverse_vol(panel):
     hi_vix = panel["vix"].loc[W.index].idxmax()
     lo_vix = panel["vix"].loc[W.index].idxmin()
     assert W.loc[hi_vix, "spy"] < W.loc[lo_vix, "spy"]
+
+
+@pytest.mark.skipif(not (data.RAW / "spy.csv").exists(), reason="raw data not present (run scripts/fetch_data.py)")
+def test_real_panel_has_the_columns_the_strategies_need():
+    P = A.build_panel()
+    assert set(synthetic_panel().columns) <= set(P.columns)

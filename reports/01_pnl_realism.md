@@ -81,7 +81,7 @@ Sharpe of the HTM strategy, entries >= 2016 (annualised from 12 cohorts/yr):
 Only 124 monthly cohorts exist: the iid standard error of an annualised Sharpe is about 0.31 (Lo 2002;
 too small for this fat-tailed payoff), so 0.51 is roughly -0.1 to 1.1, and the spread across phase
 offsets (-0.10 to 1.21 for the same strategy) shows it. Bootstrap CI for constant short on the daily
-MTM series below: -0.24 to 1.36.
+MTM series below: -0.21 to 1.34.
 
 ### 3b. Validation of the MTM swap model against SVXY (daily, -1x-equivalent)
 
@@ -196,7 +196,7 @@ Baselines and alternatives (same period, excess):
 | | Sharpe | Max DD | Worst day |
 |---|---|---|---|
 | Constant short, SVXY (= SVXY buy and hold) | 0.34 | -95.4% | -83.0% |
-| Constant short, MTM swap 1x | 0.48 (CI -0.24 .. 1.36) | -99.9% (ruin in 03/2020) | -93.9% |
+| Constant short, MTM swap 1x | 0.48 (CI -0.21 .. 1.34) | -99.9% (ruin in 03/2020) | -93.9% |
 | Constant short, MTM swap vol-tgt dampened 3x | 0.20 | -44.5% | -26.2% |
 | Constant short, HTM monthly / ladder NW | 0.46 / 0.44 | | |
 | Constant short, legacy proxy (reference) | 2.90 (A) / 3.00 (G) | | |
@@ -205,8 +205,8 @@ Baselines and alternatives (same period, excess):
 | Hard argmax, SVXY / MTM swap / HTM monthly | 0.02 / 0.02 / 0.51 | | |
 | Rank only (no regime gate), SVXY / MTM swap / HTM monthly | 0.06 / 0.29 / 0.32 | | |
 
-Block-bootstrap 95% CI (21-day blocks) on the soft strategy: SVXY unlevered 0.02 (-0.54 .. 0.78);
-SVXY dampened vol-tgt -0.08 (-0.67 .. 0.71); MTM swap 0.03 (-0.47 .. 0.80). Sub-periods (SVXY
+Stationary-bootstrap 95% CI (mean block 21 days) on the soft strategy: SVXY unlevered 0.02 (-0.55 .. 0.70);
+SVXY dampened vol-tgt -0.08 (-0.63 .. 0.64); MTM swap 0.03 (-0.45 .. 0.78). Sub-periods (SVXY
 unlevered): 2016-19 0.18, 2020-22 -0.63, 2023-26 0.04; MTM swap 0.06, -0.52, 0.33.
 
 Why HTM (0.5) and daily MTM (0.0) disagree for the gated position, **post hoc and labelled as such**:
@@ -238,7 +238,7 @@ estimate of the premium.
 ## 5. Caveats
 
 * 10 years of OOS data and effectively two stress events (2018-02, 2020-03) that dominate every
-  statistic; the CIs above are wide and the block bootstrap with 21-day blocks understates tail
+  statistic; the CIs above are wide and the bootstrap with a 21-day mean block understates tail
   clustering.
 * VIX is not the exact swap strike; no bid-offer on swaps (I have not modelled it; an assumed
   0.3-0.5 vol point per entry, which I have not verified against dealer quotes, would be roughly a
@@ -288,3 +288,5 @@ irrelevant here since the best realistic row is below 0.6 with CI crossing zero.
   believe is that the original 3.08 was 95%+ proxy error and the signal adds little over constant short.
 * **"Why trust 1 to 5 bps?"** SVXY is liquid; 5 bps is generous at small size. Swap spreads are far
   larger and not modelled; for a swap-based implementation costs, not bps, would be the story.
+
+*Note: the confidence intervals were regenerated after `pnl.sharpe_bootstrap_ci` was changed to delegate to the stationary bootstrap in `stats_tests` (previously a moving-block bootstrap); point estimates are unchanged and the intervals moved by at most 0.09.*

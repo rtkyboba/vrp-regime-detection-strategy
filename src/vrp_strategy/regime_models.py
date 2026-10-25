@@ -39,6 +39,7 @@ from scipy.optimize import minimize
 from scipy.signal import lfilter
 
 from vrp_strategy.data import load_raw
+from vrp_strategy.regimes import forward_filter
 
 # --------------------------------------------------------------------------
 # Features
@@ -137,24 +138,6 @@ class RegimeModel:
         return {}
 
 
-def _forward(logb: np.ndarray, A: np.ndarray, pi: np.ndarray):
-    """Normalised forward recursion.  Returns filtered probs and the one-step
-    predictive log-density log p(x_t | x_{<t}) for every t."""
-    T, K = logb.shape
-    m = logb.max(axis=1)
-    b = np.exp(logb - m[:, None])
-    alpha = np.empty((T, K))
-    ll = np.empty(T)
-    pred = pi
-    for t in range(T):
-        u = pred * b[t]
-        c = max(u.sum(), 1e-300)
-        alpha[t] = u / c
-        ll[t] = np.log(c) + m[t]
-        pred = alpha[t] @ A
-    return alpha, ll
-
-
 # --------------------------------------------------------------------------
 # Gaussian HMM and Gaussian mixture
 # --------------------------------------------------------------------------
@@ -213,7 +196,7 @@ class HMMRegime(RegimeModel):
         Xs = (self._X(F) - self.mu_) / self.sd_
         m = self.model_
         logb = m._compute_log_likelihood(Xs)
-        P, ll = _forward(logb, m.transmat_, m.startprob_)
+        P, ll = forward_filter(logb, m.transmat_, m.startprob_)
         P = P[:, self.order_]
         return (P, ll) if return_ll else P
 

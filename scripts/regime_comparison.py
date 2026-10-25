@@ -810,7 +810,6 @@ def persist_start_9d(persist):
 def stage_run(specs, force, workers):
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "_refits").mkdir(exist_ok=True)
-    metas = {}
     todo = [s for s in specs if force or not (OUT / f"{s.name}.csv").exists()]
     print(f"running {len(todo)} / {len(specs)} methods with {workers} workers", flush=True)
     with ProcessPoolExecutor(max_workers=workers) as ex:
@@ -888,7 +887,6 @@ def main():
         print(stage_reference(W).round(3).to_string(), flush=True)
         econ, rc, led = evaluate(specs, W)
         stage_figs(W)
-        n_methods = len(meta)
         sel = pd.read_csv(OUT / "select_n.csv")
         extra = pd.DataFrame([dict(kind="order_selection_fit", name=f"{r.model}{r.n_states}_{r.features}", variant="bic/aic/wf_ll")
                               for r in sel.itertuples()])

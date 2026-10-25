@@ -4,6 +4,8 @@ from hmmlearn import hmm
 
 from vrp_strategy.regimes import filtered_proba
 
+from .oracle import reference_filter
+
 
 @pytest.fixture(scope="module")
 def fitted():
@@ -43,3 +45,9 @@ def test_smoothed_posterior_is_not_causal(fitted):
     X2 = X.copy()
     X2[t + 1 :] = X[t + 1 :] + 100.0
     assert not np.allclose(m.predict_proba(X)[t], m.predict_proba(X2)[t])
+
+
+def test_filter_matches_independent_log_space_oracle(fitted):
+    m, X = fitted
+    ref = reference_filter(m._compute_log_likelihood(X), m.transmat_, m.startprob_)
+    assert np.allclose(filtered_proba(m, X), ref, atol=1e-8)

@@ -57,16 +57,23 @@ this data, has no demonstrable edge once the P&L is realistic and the evaluation
 ## Layout
 
 ```
-src/vrp_strategy/   data.py (loaders, split), regimes.py (causal HMM filter), regime_models.py (34-method
-                    walk-forward comparison), pnl.py (honest P&L + generic backtester), rnn_signal.py,
-                    stats_tests.py (DSR, PSR, bootstrap, PBO, reality check), alt_strategies.py,
-                    combiner.py, backtest.py / metrics.py (original helpers)
-scripts/            one command reproduces each report's numbers (audit_sharpe.py, pnl_realism.py, ...)
+src/vrp_strategy/   installable package (see the module map in __init__.py)
+  data.py             loaders, tickers, the 2016-01-01 train/test split
+  signals.py          VRP / slope / realised-vol table built from raw data (notebook 02 as a tested function)
+  regimes.py          causal HMM forward filter; regime_models.py: 34-method walk-forward comparison
+  pnl.py              honest P&L models (held-to-maturity swap, mark-to-market, SVXY) + generic backtester
+  rnn_signal.py       purged walk-forward GRU/LSTM and linear/tree baselines
+  stats_tests.py      deflated Sharpe, bootstrap, PBO, reality check, timing nulls
+  alt_strategies.py   vol-managed SPY, term-structure switching, tail hedges
+  combiner.py         blend signals by strength; judged against same-size constant exposure
+  backtest.py, metrics.py   LEGACY: the original proxy P&L, kept to reproduce the 3.08 headline
+scripts/            fetch_data.py, run_all.py, and one script per report
 tests/              pytest suite; every model has a "corrupt the future, past output must not change" test
-reports/            the six reports above, each with method, tables, caveats, trial count
-notebooks/          the original 9-notebook build (01-09), kept as the starting point
+reports/            the six reports above: method, tables, caveats, trial count
+notebooks/          the original 9-notebook build (01-09); 03 and 05-09 carry "superseded" banners
 docs/               EVAL_PROTOCOL.md: the rules every experiment follows
-data/raw/           SPX, VIX, VIX3M plus SVXY, VXX, VIX9D, VIX6M, VVIX, SKEW, SPY, IRX
+data/MANIFEST.json  pinned snapshot description (row counts, date ranges, hashes); the data itself is not in git
+.github/workflows/  CI: lint + tests on Python 3.11 and 3.12
 ```
 
 ## The original build (notebooks 01 to 09)
@@ -87,12 +94,18 @@ data/raw/           SPX, VIX, VIX3M plus SVXY, VXX, VIX9D, VIX6M, VVIX, SKEW, SP
 
 ```bash
 python -m venv .venv
-.venv/Scripts/pip install -r requirements.txt     # Linux/macOS: .venv/bin/pip
-.venv/Scripts/pip install torch --index-url https://download.pytorch.org/whl/cpu
-.venv/Scripts/python -m pytest -q                 # 130+ tests
-.venv/Scripts/python scripts/audit_sharpe.py      # reproduces 3.08 and the decomposition
+.venv/Scripts/pip install torch --index-url https://download.pytorch.org/whl/cpu   # CPU build is enough
+.venv/Scripts/pip install -e ".[data,dev]"                                         # Linux/macOS: .venv/bin/pip
+
+.venv/Scripts/python scripts/fetch_data.py      # download raw prices (pinned end date 2026-05-22); not stored in git
+.venv/Scripts/python -m pytest -q               # 140 tests; 138 run on synthetic data, so they pass without the download
+.venv/Scripts/python scripts/audit_sharpe.py    # reproduces 3.08 and the decomposition
+.venv/Scripts/python scripts/run_all.py --quick # audit + P&L + validation; drop --quick for everything
 ```
 
+`fetch_data.py --verify` compares your local files with `data/MANIFEST.json`. Yahoo occasionally revises
+adjusted prices, so hashes can differ while row counts and dates match; results then move only slightly.
+A fresh download into an empty directory reproduces the audit table exactly (3.08 / 2.74 / 2.89).
 Each `scripts/*.py` regenerates the tables in its matching report under `results/`.
 
 ## Limitations

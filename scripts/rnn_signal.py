@@ -324,7 +324,6 @@ def stage_report():
     econ_lin, pn_lin = econ_table(S21, svxy_ret, "linear")
     econ_lf, pn_lf = econ_table(S21, svxy_ret, "longflat")
     econ_sg, pn_sg = econ_table(S21, svxy_ret, "sign")
-    last = S21["rnn"].index[-1]
     # buy and hold SPY over the same dates
     spy_pos = pd.Series(1.0, S21["rnn"].index)
     bh_spy = R.econ_summary(R.exposure_pnl(spy_pos, spy_ret, 0.0, start=SPLIT))

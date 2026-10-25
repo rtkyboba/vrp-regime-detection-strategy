@@ -7,26 +7,35 @@ here we provide the forward (filtering) recursion, whose posterior at t uses
 observations <= t only.
 """
 import numpy as np
-from scipy.special import logsumexp
+
+
+def forward_filter(log_b, transmat, startprob):
+    """Normalised forward recursion on emission log-densities ``log_b`` (T, K).
+
+    Returns ``(filtered, ll)``: filtered[t] = P(state_t | x_1..x_t) and
+    ll[t] = log p(x_t | x_<t), the one-step predictive log-density (sums to the model's
+    log-likelihood). Row t depends on rows <= t only.
+    """
+    T, K = log_b.shape
+    m = log_b.max(axis=1)
+    b = np.exp(log_b - m[:, None])
+    alpha = np.empty((T, K))
+    ll = np.empty(T)
+    pred = np.asarray(startprob, dtype=float)
+    for t in range(T):
+        u = pred * b[t]
+        c = max(u.sum(), 1e-300)
+        alpha[t] = u / c
+        ll[t] = np.log(c) + m[t]
+        pred = alpha[t] @ transmat
+    return alpha, ll
 
 
 def filtered_proba(model, X):
     """Causal state posteriors P(state_t | x_1..x_t) from a fitted hmmlearn
-    GaussianHMM, via the forward algorithm. Row t uses X[:t+1] only."""
+    GaussianHMM. Row t uses X[:t+1] only."""
     X = np.asarray(X, dtype=float)
-    log_b = model._compute_log_likelihood(X)
-    log_a = np.log(np.clip(model.transmat_, 1e-300, None))
-    log_pi = np.log(np.clip(model.startprob_, 1e-300, None))
-    T, K = log_b.shape
-    out = np.empty((T, K))
-    alpha = log_pi + log_b[0]
-    alpha -= logsumexp(alpha)
-    out[0] = np.exp(alpha)
-    for t in range(1, T):
-        alpha = log_b[t] + logsumexp(alpha[:, None] + log_a, axis=0)
-        alpha -= logsumexp(alpha)
-        out[t] = np.exp(alpha)
-    return out
+    return forward_filter(model._compute_log_likelihood(X), model.transmat_, model.startprob_)[0]
 
 
 def state_order_by_feature(model, scaler, feature_idx):

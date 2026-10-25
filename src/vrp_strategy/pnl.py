@@ -49,6 +49,7 @@ import numpy as np
 import pandas as pd
 
 from .data import load_raw
+from .stats_tests import bootstrap_sharpe_ci
 
 TRADING_DAYS = 252
 H = 21                       # trading days in a 1-month variance swap
@@ -272,19 +273,14 @@ def sharpe_nw(r: pd.Series, lags: int = 21, periods: int = TRADING_DAYS) -> floa
 
 def sharpe_bootstrap_ci(r: pd.Series, block: int = 21, n_boot: int = 2000, seed: int = 0,
                         alpha: float = 0.05, periods: int = TRADING_DAYS) -> tuple[float, float]:
-    """Moving-block bootstrap CI for the annualised Sharpe (block default ~1 month)."""
-    x = r.dropna().to_numpy(dtype=float)
-    n = len(x)
-    if n < 2 * block:
+    """Stationary-bootstrap CI for the annualised Sharpe with mean block length ``block``
+    (default ~1 month). Thin wrapper over ``stats_tests.bootstrap_sharpe_ci``."""
+    x = r.dropna()
+    if len(x) < 2 * block:
         return (np.nan, np.nan)
-    rng = np.random.default_rng(seed)
-    nb = int(np.ceil(n / block))
-    starts = rng.integers(0, n - block + 1, size=(n_boot, nb))
-    idx = (starts[:, :, None] + np.arange(block)[None, None, :]).reshape(n_boot, -1)[:, :n]
-    s = x[idx]
-    sd = s.std(axis=1, ddof=1)
-    sh = np.where(sd > 0, s.mean(axis=1) / np.where(sd > 0, sd, 1) * np.sqrt(periods), np.nan)
-    return float(np.nanquantile(sh, alpha / 2)), float(np.nanquantile(sh, 1 - alpha / 2))
+    ci = bootstrap_sharpe_ci(x, n_boot=n_boot, alpha=alpha, mean_block=block,
+                             periods_per_year=periods, seed=seed)
+    return float(ci["ci_low"]), float(ci["ci_high"])
 
 
 def perf_stats(r: pd.Series, exposure: Optional[pd.Series] = None, periods: int = TRADING_DAYS) -> dict:
@@ -301,7 +297,7 @@ def perf_stats(r: pd.Series, exposure: Optional[pd.Series] = None, periods: int 
     mu, sd = r.mean() * periods, r.std(ddof=1) * np.sqrt(periods)
     dd_dev = np.sqrt(np.mean(np.minimum(r.to_numpy(), 0.0) ** 2)) * np.sqrt(periods)
     eq = np.empty(n)
-    cur, ruined = 1.0, False
+    cur = 1.0
     for i, x in enumerate(r.to_numpy()):
         cur = max(cur * (1.0 + x), 0.0)
         eq[i] = cur
