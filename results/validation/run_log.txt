@@ -1,0 +1,113 @@
+﻿                                                                                                                                      source  n_variants
+Regime-multiplier grid, 12 stressed x 11 crisis values (nb 09, commit cb087c6); contains the hand-tuned 0.5 -> 0.25 change of commit 8e4a981         132
+      HMM specification revisions: initial features, train/test split, then 'trained on vrp_vol instead' (commits 234b66b, 1144de8, 87d32aa)           3
+                                                                                           Vol-target scalar cap 150 -> 100 (commit 2a20427)           2
+                                                 Return definition revision: unit exposure vs % capital with 10% vol target (commit 2ae3e20)           2
+                                                                                        Half-Kelly sizing comparison (nb 07, commit 30852fc)           1
+                     Audit variants: causal hard, causal soft, no regime gate, constant short, real-SVXY positions (scripts/audit_sharpe.py)           5
+                                                                                                                                TOTAL logged         145
+
+N used: low=132 (grid only), central=150, high=500
+
+Grid (Viterbi labels): best SR 3.13 at s0.20_c0.0, median 2.04, cross-trial SD 0.45
+Grid (causal labels):  best SR 2.77 at s0.20_c0.0, median 1.96, cross-trial SD 0.40
+Mean pairwise correlation inside the Viterbi grid: 0.873
+
+=== validation, N = 150 ===
+                  sharpe  sharpe_lo  ci_low  ci_high  se_mertens  se_hac   psr0    dsr  sr0_hurdle  min_trl_years    skew  excess_kurtosis   rho1                                         verdict
+original_viterbi   3.080      2.202   1.646    5.262       0.711   0.776  1.000  0.999       0.850          1.427 -10.680          201.651  0.105                                            PASS
+causal_hard        2.741      1.997   1.601    4.487       0.657   0.734  1.000  0.998       0.850          1.537 -10.546          190.686  0.127                                            PASS
+causal_soft        2.809      2.046   1.677    4.503       0.671   0.742  1.000  0.998       0.850          1.525 -10.674          195.601  0.113                                            PASS
+constant_short     2.893      1.692   1.098    5.629       0.556   0.778  1.000  1.000       0.850          0.990  -7.330           84.108  0.103                                            PASS
+svxy_causal_soft   0.017      0.017  -0.552    0.703       0.312   0.333  0.521  0.005       0.830       9652.612  -5.568           85.788  0.113  FAIL: DSR 0.00 < 0.95; bootstrap CI includes 0
+svxy_buy_hold      0.366      0.351  -0.283    1.191       0.335   0.375  0.863  0.091       0.814         24.359  -7.972          178.704  0.061  FAIL: DSR 0.09 < 0.95; bootstrap CI includes 0
+
+Paired Sharpe difference vs benchmark:
+                  bench_sharpe  sharpe_diff  diff_ci_low  diff_ci_high  diff_p_value
+original_viterbi         2.893        0.187       -1.361         1.596         0.804
+causal_hard              2.893       -0.153       -1.684         1.189         0.837
+causal_soft              2.893       -0.084       -1.646         1.280         0.917
+svxy_causal_soft         0.344       -0.327       -0.737         0.034         0.097
+
+=== DSR sensitivity ===
+        strategy  n_trials  sr0_default_v  dsr_default_v  sr0_grid_v  dsr_grid_v
+original_viterbi         1          0.000          1.000       0.000       1.000
+original_viterbi        10          0.502          1.000       0.704       1.000
+original_viterbi        50          0.725          1.000       1.018       0.998
+original_viterbi       132          0.837          0.999       1.175       0.996
+original_viterbi       150          0.850          0.999       1.194       0.996
+original_viterbi       500          0.972          0.998       1.365       0.992
+original_viterbi      2000          1.098          0.997       1.542       0.985
+original_viterbi     10000          1.230          0.995       1.726       0.971
+     causal_soft         1          0.000          1.000       0.000       1.000
+     causal_soft        10          0.502          1.000       0.704       0.999
+     causal_soft        50          0.725          0.999       1.018       0.996
+     causal_soft       132          0.837          0.998       1.175       0.993
+     causal_soft       150          0.850          0.998       1.194       0.992
+     causal_soft       500          0.972          0.997       1.365       0.984
+     causal_soft      2000          1.098          0.995       1.542       0.971
+     causal_soft     10000          1.230          0.991       1.726       0.947
+svxy_causal_soft         1          0.000          0.521       0.000       0.521
+svxy_causal_soft        10          0.489          0.065       0.704       0.014
+svxy_causal_soft        50          0.707          0.013       1.018       0.001
+svxy_causal_soft       132          0.816          0.005       1.175       0.000
+svxy_causal_soft       150          0.830          0.005       1.194       0.000
+svxy_causal_soft       500          0.948          0.001       1.365       0.000
+svxy_causal_soft      2000          1.071          0.000       1.542       0.000
+svxy_causal_soft     10000          1.199          0.000       1.726       0.000
+   svxy_buy_hold         1          0.000          0.863       0.000       0.863
+   svxy_buy_hold        10          0.480          0.367       0.704       0.157
+   svxy_buy_hold        50          0.694          0.164       1.018       0.026
+   svxy_buy_hold       132          0.801          0.097       1.175       0.008
+   svxy_buy_hold       150          0.814          0.091       1.194       0.007
+   svxy_buy_hold       500          0.930          0.046       1.365       0.001
+   svxy_buy_hold      2000          1.051          0.021       1.542       0.000
+   svxy_buy_hold     10000          1.177          0.008       1.726       0.000
+  original_viterbi   iid_shuffle          actual 3.08 | null mean 1.75 sd 0.38 p95 2.40 | pct 0.998 p 0.003 | flat-at-mean-exposure 2.28
+  original_viterbi   circular_shift       actual 3.08 | null mean 2.19 sd 0.61 p95 3.37 | pct 0.908 p 0.093 | flat-at-mean-exposure 2.28
+  original_viterbi   block_permute_21d    actual 3.08 | null mean 2.04 sd 0.57 p95 3.07 | pct 0.952 p 0.049 | flat-at-mean-exposure 2.28
+  original_viterbi   block_permute_63d    actual 3.08 | null mean 2.13 sd 0.60 p95 3.20 | pct 0.926 p 0.075 | flat-at-mean-exposure 2.28
+  causal_soft        iid_shuffle          actual 2.81 | null mean 1.75 sd 0.38 p95 2.41 | pct 0.993 p 0.008 | flat-at-mean-exposure 2.28
+  causal_soft        circular_shift       actual 2.81 | null mean 2.19 sd 0.60 p95 3.34 | pct 0.835 p 0.166 | flat-at-mean-exposure 2.28
+  causal_soft        block_permute_21d    actual 2.81 | null mean 2.04 sd 0.56 p95 3.01 | pct 0.914 p 0.087 | flat-at-mean-exposure 2.28
+  causal_soft        block_permute_63d    actual 2.81 | null mean 2.13 sd 0.60 p95 3.22 | pct 0.869 p 0.132 | flat-at-mean-exposure 2.28
+  svxy_causal_soft   iid_shuffle          actual 0.02 | null mean 0.29 sd 0.22 p95 0.67 | pct 0.110 p 0.890 | flat-at-mean-exposure 0.34
+  svxy_causal_soft   circular_shift       actual 0.02 | null mean 0.31 sd 0.25 p95 0.74 | pct 0.147 p 0.853 | flat-at-mean-exposure 0.34
+  svxy_causal_soft   block_permute_21d    actual 0.02 | null mean 0.29 sd 0.24 p95 0.70 | pct 0.126 p 0.874 | flat-at-mean-exposure 0.34
+  svxy_causal_soft   block_permute_63d    actual 0.02 | null mean 0.30 sd 0.25 p95 0.74 | pct 0.132 p 0.868 | flat-at-mean-exposure 0.34
+
+=== PBO / Reality check on the 132-point grid ===
+                                        0                 1
+grid                         viterbi_grid  causal_hard_grid
+n_candidates                          132               132
+best_sharpe                      3.130089          2.767214
+pbo                              0.231546          0.337374
+prob_oos_loss                         0.0               0.0
+mean_is_sr_ann                   3.445712           3.09112
+mean_oos_sr_ann                  2.750184          2.320275
+degradation_slope               -0.810751         -0.833783
+rc_p_vs_zero                     0.000999          0.000999
+spa_p_vs_zero                    0.000999          0.000999
+rc_p_vs_constant_short           0.999001               1.0
+spa_p_vs_constant_short               1.0               1.0
+best_rule_vs_constant          s0.50_c0.0        s0.70_c0.0
+best_excess_ann_vs_constant     -0.113252         -0.137253
+
+=== sub-period Sharpe with 95% block-bootstrap CI ===
+        strategy                 period  sharpe  ci_low  ci_high
+original_viterbi 2016-07-06..2018-12-21    1.34   -0.16     7.21
+original_viterbi 2018-12-24..2021-06-11    2.06    0.54     5.01
+original_viterbi 2021-06-14..2023-11-29    6.30    4.21     8.47
+original_viterbi 2023-11-30..2026-05-22    4.76    2.86     7.48
+     causal_soft 2016-07-06..2018-12-21    1.34   -0.18     7.20
+     causal_soft 2018-12-24..2021-06-11    1.73    0.30     4.29
+     causal_soft 2021-06-14..2023-11-29    5.87    3.66     7.97
+     causal_soft 2023-11-30..2026-05-22    4.16    2.18     7.21
+  constant_short 2016-07-06..2018-12-21    2.52    0.77     6.64
+  constant_short 2018-12-24..2021-06-11    0.90   -1.60     8.28
+  constant_short 2021-06-14..2023-11-29    5.71    3.40     8.42
+  constant_short 2023-11-30..2026-05-22    3.36    0.81     8.18
+svxy_causal_soft 2016-01-04..2018-08-06    0.23   -1.00     1.90
+svxy_causal_soft 2018-08-07..2021-03-11   -0.35   -1.38     0.82
+svxy_causal_soft 2021-03-12..2023-10-13    0.08   -1.10     1.41
+svxy_causal_soft 2023-10-16..2026-05-22   -0.13   -1.18     1.26

@@ -1,4 +1,8 @@
-"""Performance-metric utilities, matching notebooks/05_backtest.ipynb."""
+"""LEGACY performance metrics, matching notebooks/05_backtest.ipynb.
+
+Sortino here uses the std of negative returns and there is no ruin handling; ``pnl.perf_stats``
+(proper downside deviation, equity floored at zero, turnover, tails) is the metric set for new work.
+"""
 import numpy as np
 
 

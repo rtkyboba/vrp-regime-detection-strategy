@@ -1,4 +1,9 @@
-"""Shared P&L and vol-targeting logic, matching notebooks/05_backtest.ipynb.
+"""LEGACY proxy P&L and vol-targeting, matching notebooks/05_backtest.ipynb exactly.
+
+Kept so the original 3.08 Sharpe can be reproduced (scripts/audit_sharpe.py) and so notebooks
+05-09 keep running. The proxy omits mark-to-market and is NOT a tradable P&L; new work should
+use ``vrp_strategy.pnl`` (``pnl.backtest``, ``pnl.mtm_returns``, ``pnl.hold_to_maturity``).
+
 
 We don't have actual options price data, so P&L is proxied as:
     daily_return = position(t-1) x (iv_daily(t-1) - rv_daily(t))

@@ -1,0 +1,19 @@
+{
+  "rnn": {
+    "cell": "gru",
+    "hidden": 16,
+    "seq_len": 20,
+    "dropout": 0.2,
+    "weight_decay": 0.01,
+    "lr": 0.002,
+    "max_epochs": 40,
+    "patience": 6,
+    "batch": 128
+  },
+  "hgb": {
+    "max_depth": 3,
+    "max_iter": 150
+  },
+  "n_trials_dev": 16,
+  "criterion": "mean Spearman IC of (2P-1) vs scaled 21d payoff, walk-forward dates < 2016 with realised labels"
+}

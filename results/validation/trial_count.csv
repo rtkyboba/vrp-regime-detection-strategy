@@ -1,0 +1,8 @@
+source,n_variants
+"Regime-multiplier grid, 12 stressed x 11 crisis values (nb 09, commit cb087c6); contains the hand-tuned 0.5 -> 0.25 change of commit 8e4a981",132
+"HMM specification revisions: initial features, train/test split, then 'trained on vrp_vol instead' (commits 234b66b, 1144de8, 87d32aa)",3
+Vol-target scalar cap 150 -> 100 (commit 2a20427),2
+Return definition revision: unit exposure vs % capital with 10% vol target (commit 2ae3e20),2
+"Half-Kelly sizing comparison (nb 07, commit 30852fc)",1
+"Audit variants: causal hard, causal soft, no regime gate, constant short, real-SVXY positions (scripts/audit_sharpe.py)",5
+TOTAL logged,145
